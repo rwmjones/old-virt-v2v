@@ -17,9 +17,13 @@ else
     abort "Didn't find either ruby/io.h or rubyio.h"
 end
 
-abort "Didn't find either f or fd in struct rb_io_t" unless
-    have_struct_member('struct rb_io_t', 'f', ['ruby.h', rubyio]) ||
-    have_struct_member('struct rb_io_t', 'fd', ['ruby.h', rubyio])
+if have_struct_member('struct rb_io_t', 'f', ['ruby.h', rubyio]) then
+    $defs << '-DHAVE_STRUCT_RB_IO_T_F'
+elsif have_struct_member('struct rb_io_t', 'fd', ['ruby.h', rubyio])
+    $defs << '-DHAVE_STRUCT_RB_IO_T_FD'
+else
+    abort "Didn't find either f or fd in struct rb_io_t"
+end
 
 have_func('rb_thread_fd_select', 'ruby.h')
 
