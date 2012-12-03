@@ -969,7 +969,7 @@ examples:
  virt-v2v -i libvirtxml -o rhev -os <export_sd> \
           [--network <network name>] <domain>.xml
 
-=item Export a VMWare ESX guest to RHEV
+=item Export a VMware ESX guest to RHEV
 
  virt-v2v -ic esx://<esx.server>/ -o rhev -os <export_sd> \
           [--network <network name>] <domain>
