@@ -386,7 +386,7 @@ use POSIX;
 use Time::gmtime;
 
 use Sys::VirtConvert::ExecHelper;
-use Sys::VirtConvert::Util qw(:DEFAULT rhev_helper rhev_ids);
+use Sys::VirtConvert::Util qw(:DEFAULT rhev_helper rhev_ids scsi_first_cmp);
 
 use Locale::TextDomain 'virt-v2v';
 
@@ -1009,7 +1009,7 @@ sub _disks
 
     my $driveno = 1;
 
-    foreach my $disk (@{$meta->{disks}}) {
+    foreach my $disk (sort { scsi_first_cmp($a->{device}, $b->{device}) } @{$meta->{disks}}) {
         my $path = $disk->{dst}->get_path();
         my $vol = Sys::VirtConvert::Connection::RHEVTarget::Vol->_get_by_path
             ($path);

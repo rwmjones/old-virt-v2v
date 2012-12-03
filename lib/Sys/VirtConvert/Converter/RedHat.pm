@@ -402,7 +402,7 @@ sub write
 
 package Sys::VirtConvert::Converter::RedHat;
 
-use Sys::VirtConvert::Util qw(:DEFAULT augeas_error);
+use Sys::VirtConvert::Util qw(:DEFAULT augeas_error scsi_first_cmp);
 use Locale::TextDomain 'virt-v2v';
 
 =pod
@@ -2091,7 +2091,7 @@ sub _remap_block_devices
     my ($meta, $virtio, $g, $root) = @_;
 
     my @devices = map { $_->{device} } @{$meta->{disks}};
-    @devices = sort @devices;
+    @devices = sort { scsi_first_cmp($a, $b) } @devices;
 
     # @devices contains an ordered list of libvirt device names. Because
     # libvirt uses a similar naming scheme to Linux, these will mostly be the
@@ -2122,13 +2122,15 @@ sub _remap_block_devices
 
     if ($libata) {
         # If there are any IDE devices, the guest will have named these sdX
-        # before any SCSI devices. i.e. If we have disks hda, hdb, sda and sdb,
-        # these will have been presented to the guest as sda, sdb, sdc and sdd
+        # after any SCSI devices. i.e. If we have disks hda, hdb, sda and sdb,
+        # these will have been presented to the guest as sdc, sdd, sda and sdb
         # respectively.
         #
-        # Here we take advantage of the fact that 'hd' comes alphabetically
-        # before 'sd' to rename all 'hd' and 'sd' devices into a single 'sd'
-        # namespace, with IDE devices coming first.
+        # N.B. I think the IDE/SCSI ordering situation may be somewhat more
+        # complicated than previously thought. This code originally put IDE
+        # drives first, but this hasn't worked for an OVA file. Given that
+        # this is a weird and somewhat unlikely situation I'm going with SCSI
+        # first until we have a more comprehensive solution.
 
         my @newdevices;
         my $suffix = 'a';

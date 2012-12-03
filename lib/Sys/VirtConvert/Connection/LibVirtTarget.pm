@@ -26,7 +26,7 @@ use Sys::Virt::StorageVol;
 
 use Sys::VirtConvert::Connection::LibVirt;
 use Sys::VirtConvert::Connection::Volume;
-use Sys::VirtConvert::Util qw(:DEFAULT parse_libvirt_volinfo);
+use Sys::VirtConvert::Util qw(:DEFAULT parse_libvirt_volinfo scsi_first_cmp);
 
 use XML::DOM;
 
@@ -396,7 +396,7 @@ DOM
     $graphics->setAttribute('passwd', $display_password)
         if defined($display_password);
 
-    foreach my $disk (sort { $a->{device} cmp $b->{device} } @{$meta->{disks}})
+    foreach my $disk (sort { scsi_first_cmp($a->{device}, $b->{device}) } @{$meta->{disks}})
     {
         my $is_block = $disk->{dst}->is_block();
 

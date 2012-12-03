@@ -32,7 +32,7 @@ use vars qw(@ISA @EXPORT @EXPORT_OK);
 @ISA = qw(Exporter);
 @EXPORT = qw(v2vdie logmsg DEBUG INFO NOTICE WARN FATAL);
 @EXPORT_OK = qw(augeas_error parse_libvirt_volinfo rhev_helper rhev_ids
-                    logmsg_init logmsg_level);
+                logmsg_init logmsg_level scsi_first_cmp);
 
 use constant DEBUG  => 0;
 use constant INFO   => 1;
@@ -228,6 +228,25 @@ sub rhev_helper
         &$sigint($sig_received)  if ($sig_received eq 'INT');
         &$sigquit($sig_received) if ($sig_received eq 'QUIT');
     }
+}
+
+=item scsi_first_cmp(a, b)
+
+Compare device names I<a> and I<b>, returning -1, 0 or 1 as for the <=>
+operator. SCSI devices, named sdX, are ordered before all other devices.
+
+=cut
+
+sub scsi_first_cmp
+{
+    my ($a, $b) = @_;
+
+    if ($a =~ /^sd/) {
+        return -1 if $b !~ /^sd/;
+    } else {
+        return 1 if $b =~ /^sd/;
+    }
+    return $a cmp $b;
 }
 
 my $logmsg;
