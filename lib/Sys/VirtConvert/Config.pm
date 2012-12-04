@@ -557,7 +557,14 @@ sub use_profile
 
     my $profile;
     foreach my $dom (@{$self->{doms}}) {
-        ($profile) = $dom->findnodes("/virt-v2v/profile[\@name='$name']");
+        ($profile, my @extras) = $dom->findnodes("/virt-v2v/profile[\@name='$name']");
+        # We deliberately ignore the case where profiles with the same name are
+        # defined in different config files, as over-riding is the purpose of
+        # multiple config files.
+        if (@extras > 0) {
+            logmsg WARN, __x('Multiple profiles defined with name {name}. '.
+                             'Which profile is used is undefined.', name => $name);
+        }
         last if defined($profile);
     }
     v2vdie __x('There is no profile named {name}',
