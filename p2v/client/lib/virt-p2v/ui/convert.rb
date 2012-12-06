@@ -60,6 +60,7 @@ module VirtP2V::UI::Convert
         @editable   = ui.get_object('convert_editable')
         @button     = ui.get_object('convert_button')
         @status     = ui.get_object('convert_status')
+        @debug      = ui.get_object('convert_debug')
 
         # Get initial values from converter
         @name.text = converter.name
@@ -88,6 +89,10 @@ module VirtP2V::UI::Convert
 
                     cb.call(true)
                 }
+
+                if conn.msgs.has_key?('OPTIONS')
+                    @debug.show
+                end
             }
         }
 
@@ -135,6 +140,8 @@ module VirtP2V::UI::Convert
                             method(:convert_network_select_toggled))
         ui.register_handler('convert_button_clicked',
                             method(:convert_button_clicked))
+        ui.register_handler('convert_debug_toggled',
+                            method(:convert_debug_toggled))
 
         @state = nil
         set_state(UI_STATE_INVALID)
@@ -425,4 +432,7 @@ module VirtP2V::UI::Convert
         event(EV_BUTTON, true)
     end
 
+    def self.convert_debug_toggled
+        @converter.debug = !@converter.debug
+    end
 end # module

@@ -2,6 +2,34 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="convert_fixed_list">
+    <columns>
+      <!-- column-name Convert -->
+      <column type="gboolean"/>
+      <!-- column-name Device -->
+      <column type="gchararray"/>
+      <!-- column-name Progress -->
+      <column type="gdouble"/>
+      <!-- column-name Size -->
+      <column type="guint64"/>
+    </columns>
+    <signal name="row-changed" handler="convert_fixed_list_row_changed" swapped="no"/>
+  </object>
+  <object class="GtkListStore" id="convert_network_list">
+    <columns>
+      <!-- column-name Convert -->
+      <column type="gboolean"/>
+      <!-- column-name Device -->
+      <column type="gchararray"/>
+    </columns>
+    <signal name="row-changed" handler="convert_network_list_row_changed" swapped="no"/>
+  </object>
+  <object class="GtkListStore" id="convert_profile_list">
+    <columns>
+      <!-- column-name Name -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkWindow" id="conversion_win">
     <property name="can_focus">False</property>
     <child>
@@ -19,141 +47,175 @@
                 <property name="label_xalign">0</property>
                 <property name="shadow_type">out</property>
                 <child>
-                  <object class="GtkAlignment" id="alignment6">
+                  <object class="GtkVBox" id="vbox8">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
-                    <property name="xalign">0</property>
-                    <property name="yalign">0</property>
-                    <property name="xscale">0</property>
-                    <property name="yscale">0</property>
-                    <property name="left_padding">12</property>
                     <child>
-                      <object class="GtkTable" id="table2">
+                      <object class="GtkAlignment" id="alignment6">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
-                        <property name="n_rows">4</property>
-                        <property name="n_columns">2</property>
-                        <property name="column_spacing">2</property>
+                        <property name="xalign">0</property>
+                        <property name="yalign">0</property>
+                        <property name="xscale">0</property>
+                        <property name="yscale">0</property>
+                        <property name="left_padding">12</property>
                         <child>
-                          <object class="GtkLabel" id="label14">
+                          <object class="GtkTable" id="table2">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Destination Profile:</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="convert_profile">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="model">convert_profile_list</property>
-                            <signal name="changed" handler="convert_profile_changed" swapped="no"/>
+                            <property name="n_rows">4</property>
+                            <property name="n_columns">2</property>
+                            <property name="column_spacing">2</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cellrenderertext8"/>
-                              <attributes>
-                                <attribute name="text">0</attribute>
-                              </attributes>
+                              <object class="GtkLabel" id="label14">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Destination Profile:</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="convert_profile">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="model">convert_profile_list</property>
+                                <signal name="changed" handler="convert_profile_changed" swapped="no"/>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cellrenderertext8"/>
+                                  <attributes>
+                                    <attribute name="text">0</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label16">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Memory (MB):</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">3</property>
+                                <property name="bottom_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="convert_memory">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">•</property>
+                                <property name="truncate_multiline">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <signal name="changed" handler="convert_memory_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">3</property>
+                                <property name="bottom_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label15">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Number of CPUs:</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">2</property>
+                                <property name="bottom_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="label18">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="xalign">0</property>
+                                <property name="label" translatable="yes">Name</property>
+                              </object>
+                              <packing>
+                                <property name="top_attach">1</property>
+                                <property name="bottom_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="convert_name">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">•</property>
+                                <property name="truncate_multiline">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <signal name="changed" handler="convert_name_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">1</property>
+                                <property name="bottom_attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEntry" id="convert_cpus">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="invisible_char">•</property>
+                                <property name="truncate_multiline">True</property>
+                                <property name="primary_icon_activatable">False</property>
+                                <property name="secondary_icon_activatable">False</property>
+                                <property name="primary_icon_sensitive">True</property>
+                                <property name="secondary_icon_sensitive">True</property>
+                                <signal name="changed" handler="convert_cpus_changed" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="right_attach">2</property>
+                                <property name="top_attach">2</property>
+                                <property name="bottom_attach">3</property>
+                              </packing>
                             </child>
                           </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label16">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Memory (MB):</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="convert_memory">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">•</property>
-                            <property name="truncate_multiline">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <signal name="changed" handler="convert_memory_changed" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">3</property>
-                            <property name="bottom_attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label15">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Number of CPUs:</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label18">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes">Name</property>
-                          </object>
-                          <packing>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="convert_name">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">•</property>
-                            <property name="truncate_multiline">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <signal name="changed" handler="convert_name_changed" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">1</property>
-                            <property name="bottom_attach">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="convert_cpus">
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">•</property>
-                            <property name="truncate_multiline">True</property>
-                            <property name="primary_icon_activatable">False</property>
-                            <property name="secondary_icon_activatable">False</property>
-                            <property name="primary_icon_sensitive">True</property>
-                            <property name="secondary_icon_sensitive">True</property>
-                            <signal name="changed" handler="convert_cpus_changed" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left_attach">1</property>
-                            <property name="right_attach">2</property>
-                            <property name="top_attach">2</property>
-                            <property name="bottom_attach">3</property>
-                          </packing>
                         </child>
                       </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkAlignment" id="alignment12">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="xalign">1</property>
+                        <property name="left_padding">2</property>
+                        <child>
+                          <object class="GtkCheckButton" id="convert_debug">
+                            <property name="label" translatable="yes">Enable server-side debugging</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                            <signal name="toggled" handler="convert_debug_toggled" swapped="no"/>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
@@ -476,34 +538,6 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="convert_fixed_list">
-    <columns>
-      <!-- column-name Convert -->
-      <column type="gboolean"/>
-      <!-- column-name Device -->
-      <column type="gchararray"/>
-      <!-- column-name Progress -->
-      <column type="gdouble"/>
-      <!-- column-name Size (GB) -->
-      <column type="guint64"/>
-    </columns>
-    <signal name="row-changed" handler="convert_fixed_list_row_changed" swapped="no"/>
-  </object>
-  <object class="GtkListStore" id="convert_network_list">
-    <columns>
-      <!-- column-name Convert -->
-      <column type="gboolean"/>
-      <!-- column-name Device -->
-      <column type="gchararray"/>
-    </columns>
-    <signal name="row-changed" handler="convert_network_list_row_changed" swapped="no"/>
-  </object>
-  <object class="GtkListStore" id="convert_profile_list">
-    <columns>
-      <!-- column-name Name -->
-      <column type="gchararray"/>
-    </columns>
   </object>
   <object class="GtkListStore" id="convert_removable_list">
     <columns>

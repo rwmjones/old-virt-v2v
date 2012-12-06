@@ -46,7 +46,7 @@ module VirtP2V
 #   vnet_type     bridge
 
 class Converter
-    attr_accessor :profile, :name, :cpus, :memory, :arch
+    attr_accessor :profile, :name, :cpus, :memory, :arch, :debug
     attr_reader :features, :disks, :removables, :nics
 
     attr_reader :connection
@@ -74,6 +74,17 @@ class Converter
                 }, cb)
             },
             lambda { |cb|
+                if @debug
+                    begin
+                        @connection.options({ "DEBUG" => 1 }, &cb)
+                    rescue VirtV2V::Connection::UnsupportedOperationError
+                        cb.call(true)
+                    end
+                else
+                    cb.call(true)
+                end
+            },
+            lambda { |cb|
                 status.call('Converting')
                 @connection.convert(&cb)
             }
@@ -86,6 +97,7 @@ class Converter
         @profile = nil
         @connection = nil
         @connection_listeners = []
+        @debug = false
 
         # Initialize basic system information
         @name = '' # There's no reasonable default for this
@@ -130,6 +142,8 @@ class Converter
         @disks = []
         @removables = []
         @nics = []
+
+        @debug = false
     end
 
     def disk(dev, status, progress, completion)
