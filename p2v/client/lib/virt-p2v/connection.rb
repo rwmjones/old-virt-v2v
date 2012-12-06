@@ -24,6 +24,8 @@ require 'rblibssh2'
 module VirtP2V
 
 class Connection
+    attr_reader :msgs
+
     class InvalidHostnameError < StandardError; end
     class InvalidCredentialsError < StandardError; end
     class RemoteError < StandardError; end
@@ -46,6 +48,9 @@ class Connection
 
         @session = nil
         @channel = nil
+
+        @msgs = {}
+        @conts = {}
     end
 
     def connect(&cb)
@@ -64,12 +69,8 @@ class Connection
             #    raise RemoteError.new(ex.message)
             end
 
-            begin
-                line = @channel.read(64)
-
-                if line !~ /^VIRT_P2V_SERVER /
-                    raise RemoteError.new("Unexpected response: #{line}")
-                end
+            line = begin
+                readline_norescue
             rescue Libssh2::Channel::ApplicationError => ex
                 if ex.message =~ /command not found/
                     raise RemoteError.new(
@@ -78,6 +79,30 @@ class Connection
                     raise RemoteError.new(ex.message)
                 end
             end
+
+            @msgs.clear
+            @conts.clear
+
+            # Example response:
+            # VIRT_P2V_SERVER 0.9.0 { MSG: METADATA OPTIONS PATH CONVERT LIST_PROFILES SET_PROFILE CONTAINER DATA } { CONT: RAW }
+            if line !~ /^VIRT_P2V_SERVER\s+(?:\S+)(.*)/
+                raise RemoteError.new("Unexpected response: #{line}")
+            end
+
+            # parse the options section for capabilities
+            $~[1].scan(/{\s*(\S+)\s*:\s*([^}]*)}/).each { |label, caps|
+                prop = case label
+                    when 'MSG' then @msgs
+                    when 'CONT' then @conts
+                    else nil
+                end
+
+                if !prop.nil?
+                    caps.split.each { |cap|
+                        prop[cap] = true
+                    }
+                end
+            }
 
             begin
                 i = 0;
@@ -219,31 +244,35 @@ class Connection
         }
     end
 
-    # Return a single line of output from the remote server
-    def readline
+    def readline_norescue
         index = nil
         loop {
             index = @buffer.index("\n")
             break unless index.nil?
 
-            begin
-                @buffer << @channel.read(64)
-            rescue IOError => ex
-                @channel.close
-                @channel = nil
-                raise RemoteError,
-                    "Server closed connection unexpectedly: #{ex.message}"
-            rescue => ex
-                @channel.close
-                @channel = nil
-                raise RemoteError,
-                    "virt-p2v-server returned an error: #{ex.message}"
-            end
+            @buffer << @channel.read(64)
         }
 
         # Remove the line from the buffer and return it with the trailing
         # newline removed
         @buffer.slice!(0..index).chomp!
+    end
+
+    # Return a single line of output from the remote server
+    def readline
+        begin
+            readline_norescue
+        rescue IOError => ex
+            @channel.close
+            @channel = nil
+            raise RemoteError,
+                "Server closed connection unexpectedly: #{ex.message}"
+        rescue => ex
+            @channel.close
+            @channel = nil
+            raise RemoteError,
+                "virt-p2v-server returned an error: #{ex.message}"
+        end
     end
 
     def parse_return
