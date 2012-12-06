@@ -33,6 +33,10 @@
 
 # Eclipse
 /.project
+/.externalToolBuilders/
+/.ignorepath
+/.includepath
+/.settings/
 
 # Ignore any .iso images we might leave lying around
 *.iso
