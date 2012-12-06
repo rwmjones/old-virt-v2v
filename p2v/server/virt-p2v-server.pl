@@ -64,8 +64,23 @@ use constant MSG_SET_PROFILE    => 'SET_PROFILE';
 use constant MSG_CONTAINER      => 'CONTAINER';
 use constant MSG_DATA           => 'DATA';
 
+my @MSGS = (
+    MSG_METADATA,
+    MSG_OPTIONS,
+    MSG_PATH,
+    MSG_CONVERT,
+    MSG_LIST_PROFILES,
+    MSG_SET_PROFILE,
+    MSG_CONTAINER,
+    MSG_DATA
+);
+
 # Container types
 use constant CONT_RAW => 'RAW';
+
+my @CONTS = (
+    CONT_RAW
+);
 
 # Global state
 my $config;
@@ -114,7 +129,8 @@ eval {
         ('/etc/virt-v2v.conf', '/var/lib/virt-v2v/virt-v2v.db');
 
     # Send our identification string
-    print "VIRT_P2V_SERVER ".$Sys::VirtConvert::VERSION."\n";
+    print "VIRT_P2V_SERVER ".$Sys::VirtConvert::VERSION.
+          " { MSG: ".join(' ', @MSGS)." } { CONT: ".join(' ', @CONTS)." }\n";
 
     my $converted = 0;
 
