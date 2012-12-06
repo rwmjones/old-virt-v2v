@@ -62,7 +62,9 @@ BuildRequires:  perl(Test::Pod::Coverage)
 BuildRequires:  perl(Module::Find)
 
 # Runtime perl modules also required at build time for use_ok test
+BuildRequires:  perl(Archive::Extract)
 BuildRequires:  perl(DateTime)
+BuildRequires:  perl(Digest::SHA1)
 BuildRequires:  perl(IO::String)
 BuildRequires:  perl(Locale::TextDomain)
 BuildRequires:  perl(Module::Pluggable)
