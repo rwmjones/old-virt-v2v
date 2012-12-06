@@ -120,17 +120,6 @@ class Connection
         @buffer = ''
     end
 
-    def lang(lang, &cb)
-        raise NotConnectedError if @channel.nil?
-
-        run(cb) {
-            @channel.write("LANG #{lang}\n")
-            result = parse_return
-
-            Gtk.queue { cb.call(result) }
-        }
-    end
-
     def metadata(meta, &cb)
         raise NotConnectedError if @channel.nil?
 
