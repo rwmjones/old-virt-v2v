@@ -31,6 +31,7 @@ class Connection
     class RemoteError < StandardError; end
     class ProtocolError < StandardError; end
     class NotConnectedError < StandardError; end
+    class UnsupportedOperationError < StandardError; end
 
     def on_connect(&cb)
         @connection_listeners << cb
@@ -143,6 +144,20 @@ class Connection
         end
 
         @buffer = ''
+    end
+
+    def options(options, &cb)
+        raise NotConnectedError if @channel.nil?
+        raise UnsupportedOperationError unless @msgs.has_key?('OPTIONS')
+
+        run(cb) {
+            payload = YAML::dump(options)
+            @channel.write("OPTIONS #{payload.length}\n")
+            @channel.write(payload)
+            result = parse_return
+
+            Gtk.queue { cb.call(result) }
+        }
     end
 
     def metadata(meta, &cb)
