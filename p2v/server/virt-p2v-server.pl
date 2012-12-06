@@ -55,6 +55,7 @@ manually.
 $SIG{'PIPE'} = 'IGNORE';
 
 # Message types
+use constant MSG_OPTIONS        => 'OPTIONS';
 use constant MSG_METADATA       => 'METADATA';
 use constant MSG_PATH           => 'PATH';
 use constant MSG_CONVERT        => 'CONVERT';
@@ -74,11 +75,6 @@ my $target;
 # Initialize logging
 logmsg_init('syslog');
 #logmsg_level(DEBUG);
-
-# Uncomment these 2 lines to capture debug information from the conversion
-# process
-#$ENV{'LIBGUESTFS_DEBUG'} = 1;
-#$ENV{'LIBGUESTFS_TRACE'} = 1;
 
 logmsg NOTICE, __x("{program} started.", program => 'p2v-server');
 
@@ -126,9 +122,29 @@ eval {
     while ($msg = p2v_receive()) {
         my $type = $msg->{type};
 
+        # OPTIONS
+        if ($type eq MSG_OPTIONS) {
+            my $yaml = p2v_read($msg->{args}[0]);
+            my $options = eval { Load($yaml); };
+            die("Error parsing options: $@\n") if $@;
+
+            $ENV{LANG} = $options->{LANG} if defined($options->{LANG});
+            if (exists($options->{DEBUG})) {
+                if ($options->{DEBUG}) {
+                    $ENV{LIBGUESTFS_TRACE} = 1;
+                    $ENV{LIBGUESTFS_DEBUG} = 1;
+                } else {
+                    delete($ENV{LIBGUESTFS_TRACE});
+                    delete($ENV{LIBGUESTFS_DEBUG});
+                }
+            }
+
+            p2v_return_ok();
+        }
+
         # METADATA length
         #  length bytes of YAML
-        if ($type eq MSG_METADATA) {
+        elsif ($type eq MSG_METADATA) {
             my $yaml = p2v_read($msg->{args}[0]);
             eval { $meta = Load($yaml); };
             die('Error parsing metadata: '.$@."\n") if $@;
