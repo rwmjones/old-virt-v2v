@@ -6,3 +6,6 @@
 
 # Built sources
 *.so
+
+# RDoc
+/doc/
