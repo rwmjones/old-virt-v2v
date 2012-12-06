@@ -54,12 +54,7 @@ manually.
 # from or writing to a pipe.
 $SIG{'PIPE'} = 'IGNORE';
 
-# The protocol version we support
-use constant VERSION => 0;
-
 # Message types
-use constant MSG_VERSION        => 'VERSION';
-use constant MSG_LANG           => 'LANG';
 use constant MSG_METADATA       => 'METADATA';
 use constant MSG_PATH           => 'PATH';
 use constant MSG_CONVERT        => 'CONVERT';
@@ -131,29 +126,9 @@ eval {
     while ($msg = p2v_receive()) {
         my $type = $msg->{type};
 
-        # VERSION n
-        if ($type eq MSG_VERSION) {
-            my $version = $msg->{args}[0];
-            if ($version <= VERSION) {
-                p2v_return_ok();
-            }
-
-            else {
-                die(__x('This version of virt-p2v-server does not '.
-                        "support protocol version {version}.\n",
-                        version => $version));
-            }
-        }
-
-        # LANG lang
-        elsif ($type eq MSG_LANG) {
-            $ENV{LANG} = $msg->{args}[0];
-            p2v_return_ok();
-        }
-
         # METADATA length
         #  length bytes of YAML
-        elsif ($type eq MSG_METADATA) {
+        if ($type eq MSG_METADATA) {
             my $yaml = p2v_read($msg->{args}[0]);
             eval { $meta = Load($yaml); };
             die('Error parsing metadata: '.$@."\n") if $@;
