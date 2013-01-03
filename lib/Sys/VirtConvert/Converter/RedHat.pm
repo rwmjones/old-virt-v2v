@@ -304,7 +304,7 @@ sub write
 # that instead.
 package Sys::VirtConvert::Converter::RedHat::Grub2;
 
-use Sys::VirtConvert::Util;
+use Sys::VirtConvert::Util qw(:DEFAULT augeas_error);
 use Locale::TextDomain 'virt-v2v';
 
 @Sys::VirtConvert::Converter::RedHat::Grub2::ISA =
@@ -313,16 +313,25 @@ use Locale::TextDomain 'virt-v2v';
 sub new
 {
     my $class = shift;
-    my ($g, $root) = @_;
-
-    # Check we have a grub2 configuration
-    die unless $g->exists('/boot/grub2/grub.cfg');
+    my ($g, $root, $config) = @_;
 
     my $self = {};
     bless($self, $class);
 
     $self->{g} = $g;
     $self->{root} = $root;
+    $self->{config} = $config;
+
+    # Look for an EFI configuration
+    foreach my $cfg ($g->glob_expand('/boot/efi/EFI/*/grub.cfg')) {
+        $self->_check_efi();
+    }
+
+    # Check we have a grub2 configuration
+    if ($g->exists('/boot/grub2/grub.cfg')) {
+        $self->{cfg} = '/boot/grub2/grub.cfg';
+    }
+    die unless exists $self->{cfg};
 
     return $self;
 }
@@ -375,7 +384,7 @@ sub update_console
         augeas_error($g, $@) if ($@);
 
         # We need to re-generate the grub config if we've updated this file
-        $g->command(['grub2-mkconfig', '-o', '/boot/grub2/grub.cfg']);
+        $g->command(['grub2-mkconfig', '-o', $self->{cfg}]);
     }
 }
 
@@ -397,6 +406,61 @@ sub write
     if ($default ne $path) {
         $g->command(['grubby', '--set-default', $path]);
     }
+}
+
+sub _check_efi
+{
+    my $self = shift;
+    my $g = $self->{g};
+
+    # We need the part_get_gpt_type and part_set_gpt_type apis, which aren't
+    # yet in a stable release - mbooth@redhat.com 19/12/2012
+    return unless ($g->can('part_get_gpt_type') && $g->can('part_set_gpt_type'));
+
+    # Check the first partition of each device looking for an EFI boot
+    # partition. We can't be sure which device is the boot device, so we just
+    # check them all.
+    foreach my $device ($g->list_devices()) {
+        my $guid = eval { $g->part_get_gpt_type($device, 1) };
+        next unless defined($guid);
+
+        if ($guid eq 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B') {
+            _convert_efi($device);
+            last;
+        }
+    }
+}
+
+sub _convert_efi
+{
+    my $self = shift;
+    my ($device) = @_;
+
+    my $g = $self->{g};
+
+    # EFI systems boot using grub2-efi, and probably don't have the base grub2
+    # package installed.
+    Sys::VirtConvert::Convert::RedHat::_install_any
+        (undef, ['grub2'], undef, $g, $self->{root}, $self->{config}, $self);
+
+    # Relabel the EFI boot partition as a BIOS boot partition
+    $g->part_set_gpt_type($device, 1, '21686148-6449-6E6F-744E-656564454649');
+
+    # Delete the fstab entry for the EFI boot partition
+    eval {
+        foreach my $node ($g->aug_match("/files/etc/fstab/*[file = '/boot/efi']"))
+        {
+            $g->aug_rm($node);
+        }
+    };
+    augeas_error($g, $@) if $@;
+
+    # Install grub2 in the BIOS boot partition. This overwrites the previous
+    # contents of the EFI boot partition.
+    $g->command(['grub2-install', $device]);
+
+    # Re-generate the grub2 config, and put it in the correct place
+    $g->command(['grub2-mkconfig', '-o', '/boot/grub2/grub.cfg']);
 }
 
 
@@ -492,7 +556,7 @@ sub convert
     _init_augeas($g);
 
     my $grub;
-    $grub = eval { Sys::VirtConvert::Converter::RedHat::Grub2->new($g, $root) };
+    $grub = eval { Sys::VirtConvert::Converter::RedHat::Grub2->new($g, $root, $config) };
     $grub = eval { Sys::VirtConvert::Converter::RedHat::GrubLegacy->new($g, $root) }
         unless defined($grub);
     v2vdie __('No grub configuration found') unless defined($grub);
