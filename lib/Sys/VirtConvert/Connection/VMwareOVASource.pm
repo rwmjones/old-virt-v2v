@@ -307,9 +307,15 @@ sub _get_volume
     my $usage = _node_val($disk, '@ovf:populatedSize');
 
     my $units = _node_val($disk, '@ovf:capacityAllocationUnits');
-    $units =~ /^byte \* 2\^(\d+)$/
-        or die "Unexpected ovf:capacityAllocationUnits: $units";
-    $units = 2 ** $1;
+    if ($units =~ /^byte \* 2\^(\d+)$/) {
+        $units = 2 ** $1;
+    } elsif ($units =~ /^byte$/) {
+        $units = 1;
+    } elsif ($units =~ /^\d*$/) {
+        # It's already a number
+    } else {
+        die "Unexpected ovf:capacityAllocationUnits: $units";
+    }
     my $size = _node_val($disk, '@ovf:capacity') * $units;
 
     my $is_block = 0;
