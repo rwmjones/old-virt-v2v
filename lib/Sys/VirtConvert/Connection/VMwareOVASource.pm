@@ -110,6 +110,9 @@ sub _uncompress_archive
     my $self = shift;
     my ($ova) = @_;
 
+    v2vdie __x('Failed to open {ova} for reading', ova => $ova)
+        unless -r $ova;
+
     my $ae = Archive::Extract->new(archive => $ova, type => 'tar');
     $ae->extract(to => $self->{extractdir});
 }
