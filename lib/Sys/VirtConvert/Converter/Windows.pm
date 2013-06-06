@@ -115,13 +115,18 @@ sub convert
 
     my $tmpdir = tempdir (CLEANUP => 1);
 
+    # Find the Windows system root
+    my $windir = $g->inspect_get_windows_systemroot($root);
+
     # Note: disks are already mounted by main virt-v2v script.
 
-    my $firstboot = _upload_files ($g, $root, $tmpdir, $config);
+    my $firstboot = _upload_files ($g, $root, $windir, $tmpdir, $config);
 
     # Open the system and software hives
-    my ($sys_guest, $sys_local) = _download_hive($g, $tmpdir, 'system');
-    my ($soft_guest, $soft_local) = _download_hive($g, $tmpdir, 'software');
+    my ($sys_guest, $sys_local) = _download_hive($g, $windir,
+                                                 $tmpdir, 'system');
+    my ($soft_guest, $soft_local) = _download_hive($g, $windir,
+                                                   $tmpdir, 'software');
 
     my $h_sys = Win::Hivex->open ($sys_local, write => 1)
         or v2vdie __x('Failed to open {hive} hive: {error}',
@@ -139,7 +144,7 @@ sub convert
     _disable_processor_drivers($h_sys, $current_cs);
 
     my ($block, $net) =
-        _prepare_virtio_drivers($g, $root, $config, $h_soft);
+        _prepare_virtio_drivers($g, $root, $windir, $config, $h_soft);
     _add_viostor_to_registry($g, $root, $h_sys, $current_cs) if $block eq 'virtio';
 
     # Commit and upload the modified registry hives
@@ -168,6 +173,7 @@ sub convert
 sub _download_hive
 {
     my $g = shift;
+    my $windir = shift;
     my $tmpdir = shift;
     my $hive = lc(shift);
 
@@ -175,7 +181,7 @@ sub _download_hive
 
     my $guest;
     eval {
-        $guest = "/windows/system32/config/$hive";
+        $guest = "$windir/system32/config/$hive";
         $guest = $g->case_sensitive_path ($guest);
 
         # Retrieve the hive file unless we've already got it
@@ -302,10 +308,10 @@ REGEDITS
 # be searched automatically when automatically installing drivers.
 sub _prepare_virtio_drivers
 {
-    my ($g, $root, $config, $h) = @_;
+    my ($g, $root, $windir, $config, $h) = @_;
 
     # Copy the target VirtIO drivers to the guest
-    my $driverdir = File::Spec->catdir($g->case_sensitive_path("/windows"), "Drivers/VirtIO");
+    my $driverdir = File::Spec->catdir($g->case_sensitive_path($windir), "Drivers/VirtIO");
 
     $g->mkdir_p($driverdir);
 
@@ -410,7 +416,7 @@ sub _prepare_virtio_drivers
 # Returns 1 if RHEV APT is available, 0 otherwise.
 sub _upload_files
 {
-    my ($g, $root, $tmpdir, $config) = @_;
+    my ($g, $root, $windir, $tmpdir, $config) = @_;
 
     # Check we have virtio
     my ($v_path) = $config->match_app($g, $root, 'virtio', $g->inspect_get_arch($root));
@@ -425,7 +431,7 @@ sub _upload_files
 
     # Copy viostor directly into place as it's a critical boot device
     $g->cp (File::Spec->catfile($v_local, 'viostor.sys'),
-            $g->case_sensitive_path ("/windows/system32/drivers"));
+            $g->case_sensitive_path ("$windir/system32/drivers"));
 
     # Check if we have the files available to install firstboot
     my @fb_missing;
