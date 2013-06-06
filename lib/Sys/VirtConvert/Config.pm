@@ -281,7 +281,7 @@ sub _get_search
     my ($g, $root, $name, $arch) = @_;
 
     my $os     = $g->inspect_get_type($root);
-    my $distro = $g->inspect_get_distro($root);
+    my $distro = $g->inspect_get_distro($root) if $os eq 'linux';
     my $major  = $g->inspect_get_major_version($root);
     my $minor  = $g->inspect_get_minor_version($root);
 
@@ -418,7 +418,7 @@ sub _match_element_dom
     my ($dom, $type, $g, $root, $name, $arch) = @_;
 
     my $os     = $g->inspect_get_type($root);
-    my $distro = $g->inspect_get_distro($root);
+    my $distro = $g->inspect_get_distro($root) if $os eq 'linux';
     my $major  = $g->inspect_get_major_version($root);
     my $minor  = $g->inspect_get_minor_version($root);
 
