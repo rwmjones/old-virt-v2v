@@ -1251,8 +1251,12 @@ sub _unconfigure_vmware
     foreach my $app (@$apps) {
         my $name = $app->{app_name};
 
-        if ($name =~ /^vmware-tools-libraries-/) {
-            push(@libraries, $name);
+        if ($name =~ /^vmware-tools-/) {
+            if ($name =~ /^vmware-tools-libraries-/) {
+                push(@libraries, $name);
+            } else {
+                push (@remove, $name);
+            }
         }
         elsif ($name eq "VMwareTools" || $name =~ /^(?:kmod-)?vmware-tools-/) {
             push(@remove, $name);
