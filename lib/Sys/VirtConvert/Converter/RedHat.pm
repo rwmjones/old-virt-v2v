@@ -1291,7 +1291,9 @@ sub _unconfigure_vmware
                             $alts{$alt} = 1;
                         }
 
-                        $g->command(['yum', 'install', '-y', keys(%alts)]);
+                        my @replacements = keys(%alts);
+                        $g->command(['yum', 'install', '-y', @replacements])
+                            if @replacements > 0;
 
                         push(@remove, $library);
                     };
