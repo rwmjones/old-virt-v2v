@@ -40,6 +40,25 @@ sub get_initrd
     v2vdie __x('Didn\'t find initrd for kernel {path}', path => $path);
 }
 
+sub check_efi
+{
+    my $self = shift;
+    my $g = $self->{g};
+
+    # Check the first partition of each device looking for an EFI boot
+    # partition. We can't be sure which device is the boot device, so we just
+    # check them all.
+    foreach my $device ($g->list_devices()) {
+        my $guid = eval { $g->part_get_gpt_type($device, 1) };
+        next unless defined($guid);
+
+        if ($guid eq 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B') {
+            $self->convert_efi($device);
+            last;
+        }
+    }
+}
+
 
 # Methods for inspecting and manipulating grub legacy
 package Sys::VirtConvert::Converter::RedHat::GrubLegacy;
@@ -62,6 +81,11 @@ sub new
 
     $self->{g} = $g;
     $self->{root} = $root;
+
+    # Look for an EFI configuration
+    foreach my $cfg ($g->glob_expand('/boot/efi/EFI/*/grub.conf')) {
+        $self->check_efi();
+    }
 
     # Look for the grub configuration file
     foreach my $path ('/boot/grub/menu.lst', '/boot/grub/grub.conf')
@@ -297,6 +321,24 @@ sub write
     augeas_error($g, $@) if ($@);
 }
 
+# For Grub legacy, all we have to do is re-install grub in the correct place.
+sub convert_efi
+{
+    my $self = shift;
+    my ($device) = @_;
+
+    my $g = $self->{g};
+
+    $g->cp('/etc/grub.conf', '/boot/grub/grub.conf');
+    $g->ln_sf('/boot/grub/grub.conf', '/etc/grub.conf');
+
+    # Reload to pick up grub.conf in its new location
+    eval { $g->aug_load() };
+    augeas_error($g, $@) if ($@);
+
+    $g->command(['grub-install', $device]);
+}
+
 
 # Methods for inspecting and manipulating grub2. Note that we don't actually
 # attempt to use grub2's configuration because it's utterly insane. Instead,
@@ -324,7 +366,7 @@ sub new
 
     # Look for an EFI configuration
     foreach my $cfg ($g->glob_expand('/boot/efi/EFI/*/grub.cfg')) {
-        $self->_check_efi();
+        $self->check_efi();
     }
 
     # Check we have a grub2 configuration
@@ -408,26 +450,13 @@ sub write
     }
 }
 
-sub _check_efi
-{
-    my $self = shift;
-    my $g = $self->{g};
-
-    # Check the first partition of each device looking for an EFI boot
-    # partition. We can't be sure which device is the boot device, so we just
-    # check them all.
-    foreach my $device ($g->list_devices()) {
-        my $guid = eval { $g->part_get_gpt_type($device, 1) };
-        next unless defined($guid);
-
-        if ($guid eq 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B') {
-            _convert_efi($device);
-            last;
-        }
-    }
-}
-
-sub _convert_efi
+# For grub2, we :
+#   Turn the EFI partition into a BIOS Boot Partition
+#   Remove the former EFI partition from fstab
+#   Install the non-EFI version of grub
+#   Install grub2 in the BIOS Boot Partition
+#   Regenerate grub.cfg
+sub convert_efi
 {
     my $self = shift;
     my ($device) = @_;
