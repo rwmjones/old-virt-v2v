@@ -437,7 +437,8 @@ sub _convert_efi
     # EFI systems boot using grub2-efi, and probably don't have the base grub2
     # package installed.
     Sys::VirtConvert::Convert::RedHat::_install_any
-        (undef, ['grub2'], undef, $g, $self->{root}, $self->{config}, $self);
+        (undef, ['grub2'], undef, $g, $self->{root}, $self->{config}, $self)
+        or v2vdie __x('Failed to install non-EFI grub2');
 
     # Relabel the EFI boot partition as a BIOS boot partition
     $g->part_set_gpt_type($device, 1, '21686148-6449-6E6F-744E-656564454649');
