@@ -413,10 +413,6 @@ sub _check_efi
     my $self = shift;
     my $g = $self->{g};
 
-    # We need the part_get_gpt_type and part_set_gpt_type apis, which aren't
-    # yet in a stable release - mbooth@redhat.com 19/12/2012
-    return unless ($g->can('part_get_gpt_type') && $g->can('part_set_gpt_type'));
-
     # Check the first partition of each device looking for an EFI boot
     # partition. We can't be sure which device is the boot device, so we just
     # check them all.
