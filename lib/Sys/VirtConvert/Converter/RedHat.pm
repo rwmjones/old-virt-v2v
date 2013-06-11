@@ -147,15 +147,26 @@ sub list_kernels
     my $grub_fs = $self->{grub_fs};
 
     # Look for a kernel, starting with the default
-    my @paths;
-    eval {
-        # Get the default kernel from grub if it's set
-        my $default = eval { $g->aug_get("/files$grub_conf/default") };
-        # Doesn't matter if get fails
+    my @paths = eval {
+        # Get a list of all kernels
+        my @ret = $g->aug_match("/files$grub_conf/title/kernel");
 
-        push(@paths, $g->aug_match("/files$grub_conf/title[$default]/kernel"))
-            if defined($default);
-        push(@paths, $g->aug_match("/files$grub_conf/title/kernel"));
+        # Get the default kernel from grub if it's set
+        # Doesn't matter if there isn't one (aug_get will fail)
+        my $default = eval {
+            my $idx = $g->aug_get("/files$grub_conf/default");
+
+            # Grub indices are zero-based, augeas is 1-based
+            "/files$grub_conf/title[".($idx + 1)."]/kernel";
+        };
+
+        if (defined($default)) {
+            # Remove the default from the list and put it at the beginning
+            @ret = grep {!m{$default}} @ret;
+            unshift(@ret, $default);
+        }
+
+        @ret;
     };
     augeas_error($g, $@) if ($@);
 
