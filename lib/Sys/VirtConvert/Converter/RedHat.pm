@@ -193,24 +193,33 @@ sub update_console
     my $g = $self->{g};
     my $grub_conf = $self->{grub_conf};
 
-    # Update any kernel console lines
-    foreach my $augpath
-        ($g->aug_match("/files$grub_conf/title/kernel/console"))
-    {
-        my $console = $g->aug_get($augpath);
-        if ($console =~ /\b(x|h)vc0\b/) {
-            if ($remove) {
+    eval {
+        # Update any kernel console lines
+        my $deleted = 0;
+        foreach my $augpath
+            ($g->aug_match("/files$grub_conf/title/kernel/console"))
+        {
+            my $console = $g->aug_get($augpath);
+            if ($console =~ /\b(x|h)vc0\b/) {
+                if ($remove) {
+                    $g->aug_defvar("delconsole$deleted", $augpath);
+                    $deleted++;
+                } else {
+                    $console =~ s/\b(x|h)vc0\b/ttyS0/g;
+                    $g->aug_set($augpath, $console);
+                }
+            }
+
+            if ($remove && $console =~ /\bttyS0\b/) {
                 $g->aug_rm($augpath);
-            } else {
-                $console =~ s/\b(x|h)vc0\b/ttyS0/g;
-                $g->aug_set($augpath, $console);
             }
         }
 
-        if ($remove && $console =~ /\bttyS0\b/) {
-            $g->aug_rm($augpath);
+        for (my $i = 0; $i < $deleted; $i++) {
+            $g->aug_rm('$delconsole'.$i);
         }
-    }
+    };
+    augeas_error($g, $@) if ($@);
 }
 
 sub check
