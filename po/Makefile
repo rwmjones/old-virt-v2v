@@ -56,7 +56,7 @@ $(TD).pot: $(POTFILES)
 		--keyword=__p:1c,2 --keyword=__np:1c,2,3 \
 		--keyword=__npx:1c,2,3 --keyword=N__ --keyword=N__n:1,2 \
 		--keyword=N__p:1c,2 --keyword=N__np:1c,2,3 --keyword=%__ \
-		--language=perl && \
+		--language=perl --no-location && \
 	rm -f $@ && mv $(TD).pox $@
 
 install: $(MO_FILES)
@@ -82,7 +82,7 @@ update-po:
           lang=`echo $$cat | sed 's/\$(CATOBJEXT)$$//'`; \
           mv $$lang.po $$lang.old.po; \
           echo "$$lang:"; \
-          if $(MSGMERGE) $$lang.old.po $(TD).pot -o $$lang.po; then \
+          if $(MSGMERGE) --no-location $$lang.old.po $(TD).pot -o $$lang.po; then \
             rm -f $$lang.old.po; \
           else \
             echo "msgmerge for $$cat failed!"; \
