@@ -63,11 +63,16 @@ p2v/image-builder/version.ks
 p2v/image-builder/virt-p2v-image-builder
 p2v/image-builder/virt-p2v-image.ks
 p2v/server/virt-p2v-server.pl
+po/de.po
 po/es.po
 po/es_ES.po
+po/eu.po
 po/fr.po
+po/hu.po
 po/it.po
+po/ja.po
 po/Makefile
+po/nb.po
 po/nl.po
 po/or.po
 po/PACKAGE
@@ -76,6 +81,7 @@ po/POTFILES.in
 po/pt_BR.po
 po/ru.po
 po/te.po
+po/tr.po
 po/uk.po
 po/virt-v2v.pot
 po/zh_CN.po
