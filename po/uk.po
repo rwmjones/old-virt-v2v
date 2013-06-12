@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: libguestfs@redhat.com\n"
-"POT-Creation-Date: 2012-12-06 14:39+0000\n"
+"POT-Creation-Date: 2013-06-12 11:12+0100\n"
 "PO-Revision-Date: 2012-09-26 15:07+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -548,6 +548,10 @@ msgstr ""
 #, fuzzy, perl-brace-format
 msgid "Didn't find grub entry for kernel {kernel}"
 msgstr "Не вдалося знайти каталог модулів {modules} для ядра {path}\n"
+
+#, fuzzy
+msgid "Failed to install non-EFI grub2"
+msgstr "Не вдалося встановити нетипові пакунки користувача"
 
 msgid "No grub configuration found"
 msgstr ""
