@@ -74,7 +74,6 @@ install: $(MO_FILES)
 update-mo: $(MO_FILES)
 
 update-po:
-	$(MAKE) $(TD).pot
 	cd $(srcdir); \
         catalogs='$(CATALOGS)'; \
         for cat in $$catalogs; do \
