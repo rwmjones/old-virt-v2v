@@ -4,14 +4,14 @@
 # 
 # Translators:
 # dominique bribanick <chepioq@gmail.com>, 2011
-# Jérôme Fenal <jfenal@gmail.com>, 2012-2013
+# Jérôme Fenal <jfenal@gmail.com>, 2011-2013
 # Jérôme Fenal <jfenal@gmail.com>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
 "POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 10:24+0000\n"
+"PO-Revision-Date: 2013-06-12 10:41+0000\n"
 "Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: French <trans-fr@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -461,7 +461,7 @@ msgstr "Mappage réseau invalide : {config}"
 
 #, perl-brace-format
 msgid "Didn't find initrd for kernel {path}"
-msgstr "Impossible de trouver l'initrd pour le noyau {kernel}"
+msgstr "Impossible de trouver l'initrd pour le noyau {path}"
 
 #, perl-brace-format
 msgid "grub refers to {path}, which doesn't exist."
