@@ -1,0 +1,962 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Red Hat Inc.
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+# Hajime Taira <htaira@redhat.com>, 2012
+# Tomoyuki KATO <tomo@dream.daynight.jp>, 2011-2012
+msgid ""
+msgstr ""
+"Project-Id-Version: virt-v2v\n"
+"Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
+"POT-Creation-Date: 2012-12-06 14:39+0000\n"
+"PO-Revision-Date: 2012-12-17 05:19+0000\n"
+"Last-Translator: Hajime Taira <htaira@redhat.com>\n"
+"Language-Team: Japanese <trans-ja@lists.fedoraproject.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../lib/Sys/VirtConvert/Converter.pm:100
+#, perl-brace-format
+msgid "{e} (ignored)\n"
+msgstr "{e} (無視しました)\n"
+
+#: ../lib/Sys/VirtConvert/Converter.pm:120
+#, perl-brace-format
+msgid ""
+"Unable to convert this guest operating system. Its storage will be "
+"transfered and a domain created for it, but it may not operate correctly "
+"without manual reconfiguration. The domain will present all storage devices "
+"as {block}, all network interfaces as {net} and the host as {arch}."
+msgstr "このゲストOSの中身を変換できません。ストレージが変換され、仮想マシンは作成されましたが、手動で再設定しなければ正しく動作しないかもしれません。仮想マシンは、すべてのストレージデバイスを {block} モデル、すべてのネットワークインターフェースを {net} モデル、ホストのアーキテクチャーを {arch} としました。"
+
+#: ../lib/Sys/VirtConvert/Util.pm:91
+#, perl-brace-format
+msgid "augeas error for {file}: {error}"
+msgstr "{file} に対して augeas エラーが発生しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Util.pm:95
+#, perl-brace-format
+msgid "augeas error for {file}"
+msgstr "{file} に対して augeas エラーが発生しました"
+
+#: ../lib/Sys/VirtConvert/Util.pm:102
+#, perl-brace-format
+msgid "error at line {line}, char {char}, file position {pos}"
+msgstr "{line} 行目、{char} 文字目、ファイル位置 {pos} においてエラーが発生しました"
+
+#: ../lib/Sys/VirtConvert/Util.pm:110
+#, perl-brace-format
+msgid "augeas lens: {lens}"
+msgstr "augeas lens: {lens}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:70
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:716
+#, perl-brace-format
+msgid "Failed to create directory {dir}: {error}"
+msgstr "ディレクトリー {dir} の作成に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:81
+#, perl-brace-format
+msgid ""
+"Failed to create new volume {path} with format {format}. Error was: {error}"
+msgstr "{format} 形式の新規ボリューム {path} の作成に失敗しました。エラー: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:106
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:724
+#: ../lib/Sys/VirtConvert/Transfer/Local.pm:100
+#, perl-brace-format
+msgid "Unable to open {path} for writing: {error}"
+msgstr "{path} に対する書き込み権限がありません: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:126
+#, perl-brace-format
+msgid "Error closing {path}: {error}"
+msgstr "{path} を閉じるときにエラーが発生しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:215
+msgid "Unable to read data from RHEV."
+msgstr "RHEV からデータを取得できません。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:297
+#, perl-brace-format
+msgid "RHEV cannot handle volumes of format {format}"
+msgstr "RHEV は {format} 形式のボリュームを扱えません。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:357
+#, perl-brace-format
+msgid "Unable to move volume from temporary location {tmpdir} to {dir}"
+msgstr "一時領域 {tmpdir} から {dir} にボリュームを移動できません。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:375
+#, perl-brace-format
+msgid "Error whilst attempting to remove temporary directory {dir}"
+msgstr "一時ディレクトリー {dir} の削除を試行している間にエラーが発生しました。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:422
+msgid "You must be root to output to RHEV"
+msgstr "RHEV へエクスポートするには root ユーザーでvirt-v2vを実行する必要があります。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:430
+#, perl-brace-format
+msgid "Unable to change ownership of {mountdir} to vdsm:kvm"
+msgstr "{mountdir} の所有者を vdsm:kvm に変更できません"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:441
+#, perl-brace-format
+msgid ""
+"Failed to mount {path}. Command exited with status {status}. Output was: "
+"{output}"
+msgstr "{path} のマウントに失敗しました。コマンドがステータス {status} で終了しました。出力結果: {output}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:450
+#, perl-brace-format
+msgid "Unable to open {mountdir}: {error}"
+msgstr "{mountdir} を開けません: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:461
+#, perl-brace-format
+msgid ""
+"{domain_path} contains multiple possible domains. It may only contain one."
+msgstr "{domain_path} は複数のストレージドメインを含んでいます。含められるのは1つのみです。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:466
+#, perl-brace-format
+msgid "{domain_path} does not contain an initialised storage domain."
+msgstr "{domain_path} には初期化された Export ストレージドメインが含まれていません。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:478
+#, perl-brace-format
+msgid ""
+"{domain_path} has not been attached to a RHEV data center ({path} does not "
+"exist)."
+msgstr "{domain_path} が RHEV のデータセンターにアタッチされていません ({path} が存在しません)。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:510
+#, perl-brace-format
+msgid ""
+"Failed to unmount {path}. Command exited with status {status}. Output was: "
+"{output}"
+msgstr "{path} のアンマウントに失敗しました。コマンドがステータス {status} で終了しました。出力結果: {output}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:520
+#, perl-brace-format
+msgid "Failed to remove mount directory {dir}: {error}"
+msgstr "マウントディレクトリー {dir} の削除に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:701
+msgid ""
+"This guest requires a password for connection to its display, but this is "
+"not supported by RHEV. The converted guest's display will not require a "
+"separate password to connect."
+msgstr "この仮想マシンはディスプレイへ接続するためにパスワードが必要としていましたが RHEV ではサポートされていません。変換された仮想マシンのディスプレイは接続するために独立したパスワードを要求しません。"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:811
+#, perl-brace-format
+msgid "Unsupported architecture: {arch}"
+msgstr "対応していないアーキテクチャー: {arch}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:868
+#, perl-brace-format
+msgid "Unknown Windows version: {major}.{minor}"
+msgstr "未知の Windows のバージョン: {major}.{minor}"
+
+#: ../lib/Sys/VirtConvert/Connection/RHEVTarget.pm:1161
+#, perl-brace-format
+msgid ""
+"Unknown NIC model {driver} for {dev}. NIC will be {default} when imported."
+msgstr "{dev} は未知の NIC モデル {driver} です。NIC はインポートする時にデフォルトの {default} になります。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:89
+#, perl-brace-format
+msgid "Failed to open {path}: {error}"
+msgstr "{path} を開くのに失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:97
+#, perl-brace-format
+msgid "Unable to parse domain from file {path}: {error}"
+msgstr "ファイル {path} から仮想マシン設定の構文解析できません: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:102
+#, perl-brace-format
+msgid "{path} doesn't look like a libvirt domain XML file"
+msgstr "{path} は libvirt の仮想マシン XML ファイルに思えません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:121
+#, perl-brace-format
+msgid "Guest disk image {path} is not readable.\n"
+msgstr "仮想マシンのディスクイメージ {path} が読み込めません。\n"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:126
+#, perl-brace-format
+msgid "Unable to execute qemu-img: {error}\n"
+msgstr "qemu-img を実行できません: {error}\n"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:146
+#, perl-brace-format
+msgid ""
+"Unexpected output from qemu-img:\n"
+"{output}\n"
+msgstr "qemu-img からの予期しない出力結果:\n{output}\n"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtXMLSource.pm:151
+#, perl-brace-format
+msgid "qemu-img returned unexpected virtual size: {size}\n"
+msgstr "qemu-img が予期しない仮想ディスクイメージのサイズを返しました: {size}\n"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:138
+#, perl-brace-format
+msgid ""
+"Failed to retrieve volume information for {path}. This could be because the volume doesn't exist, or because the volume exists but is not contained in a storage pool.\n"
+"\n"
+"In the latter case, you must create a storage pool of the correct type to contain the volume. Note that you do not have to re-create or move the volume itself, only define a pool which contains it. libvirt will automatically detect the volume when it scans the pool after creation.\n"
+"\n"
+"virt-manager is able to create storage pools. Select Edit->Connection Details from the application menu. Storage pools are displayed in the Storage tab."
+msgstr "{path} のボリューム情報の取得に失敗しました。これは、ボリュームが存在しないか、もしくはボリュームは存在してもストレージプールを含んでいないからという可能性があります。\n\n後者の場合、ボリュームを格納するために適切な形式のストレージプールを作成しなければいけません。ボリューム自身を再作成または移動する必要はなく、それを含むプールを定義するのみでよいことに注意してください。作成後にプールをスキャンするとき、libvirt が自動的にボリュームを検知します。\n\nvirt-manager にてストレージプールを作成できます。virt-manager のアプリケーションメニューから編集->接続の詳細を選択します。ストレージプールがストレージタブに表示されます。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:153
+#, perl-brace-format
+msgid "Failed to retrieve storage volume {path}: {error}"
+msgstr "ストレージボリューム {path} の取得に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:174
+#, perl-brace-format
+msgid "Failed to retrieve storage pool for volume {path}: {error}"
+msgstr "ボリューム {path} のストレージプールの取得に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:186
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:192
+#, perl-brace-format
+msgid "Pool XML has no type attribute: {xml}"
+msgstr "プールの XML に type 属性がありません: {xml}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:210
+#, perl-brace-format
+msgid "Guest {name} is currently {state}. It must be shut down first."
+msgstr "現在、仮想マシン {name} の状態が {state} です。まずシャットダウンしなければいけません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:221
+msgid "idle"
+msgstr "アイドル"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:223
+msgid "running"
+msgstr "実行中"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:225
+msgid "blocked"
+msgstr "ブロック"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:227
+msgid "paused"
+msgstr "一時停止"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:229
+msgid "shutting down"
+msgstr "シャットダウン中"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:231
+msgid "shut down"
+msgstr "シャットダウン"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:233
+msgid "crashed"
+msgstr "クラッシュ"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtSource.pm:256
+#, perl-brace-format
+msgid "{name} isn't a valid guest name"
+msgstr "{name} は有効な仮想マシン名ではありません"
+
+#: ../lib/Sys/VirtConvert/Connection/Source.pm:112
+#, perl-brace-format
+msgid "Transferring storage volume {name}: {size} bytes"
+msgstr "ストレージボリューム {name} の転送中: {size} バイト"
+
+#: ../lib/Sys/VirtConvert/Connection/Source.pm:142
+#, perl-brace-format
+msgid "Didn't receive full volume. Received {received} of {total} bytes."
+msgstr "完全なボリュームを受信できませんでした。{total} バイト中 {received} バイトを受信しました。"
+
+#: ../lib/Sys/VirtConvert/Connection/Source.pm:168
+#, perl-brace-format
+msgid ""
+"Storage volume {name} already exists on the target. NOT copying it again. "
+"Delete the volume and retry to copy again."
+msgstr "ストレージボリューム {name} がすでにターゲットに存在します。そのままコピーせずに、ターゲット上のボリュームを削除して、再びコピーを試してください。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirt.pm:75
+#, perl-brace-format
+msgid "Unable to parse URI authority: {auth}"
+msgstr "URI の認証情報を構文解析できません: {auth}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirt.pm:78
+msgid ""
+"Specifying a password in the connection URI is not supported. It has been "
+"ignored."
+msgstr "コネクション URI においてパスワードの指定はサポートされません。これは無視されます。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirt.pm:127
+#, perl-brace-format
+msgid "Failed to connect to {uri}: {error}"
+msgstr "{uri} への接続に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:91
+#, perl-brace-format
+msgid "Output pool {poolname} is not a valid storage pool."
+msgstr "出力先プール {poolname} は有効なストレージプールではありません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:184
+#, perl-brace-format
+msgid "Target pool type {pooltype} doesn't support format {format}"
+msgstr "ターゲットのプール種別 {pooltype} は形式 {format} をサポートしていません"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:202
+#, perl-brace-format
+msgid "Failed to create storage volume: {error}"
+msgstr "ストレージボリュームの作成に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:438
+#, perl-brace-format
+msgid "Ignoring removable device {device} with unknown type {type}."
+msgstr "未知の形式 {type} を持つリムーバブルデバイス {device} を無視します。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:460
+#, perl-brace-format
+msgid ""
+"Only 4 IDE devices are supported, but this guest has {number}. The guest "
+"will not operate correctly without manual reconfiguration."
+msgstr "IDE デバイスは4 個までサポートされますが、対象の仮想マシンには IDE デバイスが {number} 個あります。仮想マシンを手動で再設定しないと正しく動作しません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:509
+#, perl-brace-format
+msgid "Automatically cleaning up volume {vol} from pool {pool}."
+msgstr "プール {pool} からボリューム {vol} を自動的に削除しています。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:537
+#, perl-brace-format
+msgid "The connected hypervisor does not support a {arch} kvm guest."
+msgstr "接続したハイパーバイザーは {arch} KVM ゲストをサポートしません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:552
+#, perl-brace-format
+msgid "The connected hypervisor does not support feature {feature}."
+msgstr "接続したハイパーバイザーは {feature} 機能をサポートしません。"
+
+#: ../lib/Sys/VirtConvert/Connection/LibVirtTarget.pm:558
+msgid ""
+"The target guest does not support acpi under KVM. ACPI will be disabled."
+msgstr "対象の仮想マシンは KVM 上において ACPI をサポートしません。ACPI が無効にされます。"
+
+#: ../lib/Sys/VirtConvert/Transfer/Local.pm:36
+#, perl-brace-format
+msgid "Unable to open {path} for reading: {error}"
+msgstr "{path} を読み込み用に開けません: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/Local.pm:77
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:229
+#, perl-brace-format
+msgid "Error reading from {path}: {error}"
+msgstr "{path} から読み込み中にエラーが発生しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/Local.pm:166
+#, perl-brace-format
+msgid "Error writing to {path}: {error}"
+msgstr "{path} への書き込み中に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:108
+#, perl-brace-format
+msgid "Unexpected error copying {path} from {host}."
+msgstr "{host} から {path} をコピー中に予期しないエラーが発生しました。"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:113
+#, perl-brace-format
+msgid "Command output: {output}"
+msgstr "コマンドの出力結果: {output}"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:274
+#, perl-brace-format
+msgid "Error writing data to {path}: {error}"
+msgstr "{path} へのデータの書き込み中にエラーが発生しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:333
+msgid "virt-v2v cannot yet write to an SSH connection"
+msgstr "virt-v2v は SSH コネクションでの書き込みをまだサポートしていません。"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:363
+#, perl-brace-format
+msgid "Caching {name}"
+msgstr "{name} のキャッシュ中"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:368
+#, perl-brace-format
+msgid "Caching {name}: {size} bytes"
+msgstr "{name} のキャッシュ中: {size} バイト"
+
+#: ../lib/Sys/VirtConvert/Transfer/SSH.pm:423
+msgid ""
+"When writing to an SSH connection, virt-v2v can only currently convert "
+"volumes to raw format"
+msgstr "SSH コネクションに書き込むとき、virt-v2v は現在ボリュームを RAW 形式のみに変換できます。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:95
+#, perl-brace-format
+msgid "Failed to connect to {host}: {error}"
+msgstr "{host} への接続に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:101
+#, perl-brace-format
+msgid "Failed to send request to {host}: {error}"
+msgstr "{host} へのリクエストの送信に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:120
+#, perl-brace-format
+msgid "ESX Server didn't return content length for {uri}"
+msgstr "ESX サーバーが {uri} に対するコンテンツ長を返しませんでした。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:154
+#, perl-brace-format
+msgid "Error reading data from {host}"
+msgstr "{host} からデータの読み込み中にエラーが発生しました。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:173
+#, perl-brace-format
+msgid "SSL Certificate Subject from {host} doesn't contain a CN."
+msgstr "{host} からの SSL証明書のサブジェクトに CN が含まれていません。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:177
+#, perl-brace-format
+msgid "Server {server} presented an SSL certificate for {commonname}"
+msgstr "サーバー {server} が {commonname} の SSL 証明書を提示しました"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:187
+#, perl-brace-format
+msgid "SSL Certificate presented by {host} will not be valid until {date}."
+msgstr "{host} により提示された SSL 証明書は {date} まで有効ではありません。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:193
+#, perl-brace-format
+msgid "SSL Certificate presented by {host} expired on {date}."
+msgstr "{host} により提示された SSL 証明書は {date} に期限切れしています。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:301
+#, perl-brace-format
+msgid ""
+"Authentication is required to connect to {server} and no credentials were "
+"found in .netrc."
+msgstr "{server} に接続するには認証が必要ですが、認証情報が .netrc に見つかりませんでした。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:399
+msgid "virt-v2v cannot write to an ESX connection"
+msgstr "virt-v2v が ESX コネクションに書き込みできません"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:432
+msgid "Unable to write to an ESX connection"
+msgstr "ESX コネクションに書き込みできません"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:462
+#, perl-brace-format
+msgid ""
+"Authentication error connecting to {server}. Used credentials for {username}"
+" from .netrc."
+msgstr "{server} への接続において認証エラーが発生しました。.netrc から {username} の認証情報を使用しました。"
+
+#: ../lib/Sys/VirtConvert/Transfer/ESX.pm:467
+#, perl-brace-format
+msgid "Failed to connect to ESX server: {error}"
+msgstr "ESX サーバーへの接続に失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:78
+#, perl-brace-format
+msgid "Config file {path} doesn't exist"
+msgstr "設定ファイル {path} がありません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:80
+#, perl-brace-format
+msgid "Don't have permissions to read {path}"
+msgstr "{path} の読み取り権限がありません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:86
+#, perl-brace-format
+msgid "Unable to parse config file {path}: {error}"
+msgstr "設定ファイル {path} を構文解析できません: {error}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:156
+#, perl-brace-format
+msgid ""
+"Failed to create transfer iso. Command output was:\n"
+"{output}"
+msgstr "転送 ISO イメージを作成できません。コマンドの出力結果:\n{output}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:316
+#, perl-brace-format
+msgid "app entry in config doesn't contain a path: {xml}"
+msgstr "設定の app エントリーが path を含んでいません: {xml}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:375
+#, perl-brace-format
+msgid ""
+"Capability in config contains a dependency with no {property} attribute: "
+"{xml}"
+msgstr "設定の capability が {property} 属性のない dep を含んでいます: {xml}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:403
+#, perl-brace-format
+msgid "No config specified. No {type} match for {search}."
+msgstr "設定が指定されていません。{search} に対して {type} 一致しません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:412
+#, perl-brace-format
+msgid "No {type} in config matches {search}"
+msgstr "設定において {search} と一致する {type} がありません"
+
+#: ../lib/Sys/VirtConvert/Config.pm:426
+msgid "Didn't detect operating system"
+msgstr "オペレーティングシステムを検知できません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:500
+#, perl-brace-format
+msgid ""
+"No mapping found for {type} interface {name} in config file. The converted "
+"guest may not start until its network interface is updated."
+msgstr "設定ファイルにおいて {type} インターフェース {name} に対するマッピングがありません。変換された仮想マシンはネットワークインターフェースの設定が更新されるまで起動しないかもしれません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:514
+#, perl-brace-format
+msgid "Invalid network mapping in config: {config}."
+msgstr "無効なネットワークマッピングが設定中にあります: {config}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:521
+#, perl-brace-format
+msgid "Unknown interface type {type} in network mapping: {config}"
+msgstr "ネットワークマッピングにおける未知のインターフェース形式 {type}: {config}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:565
+#, perl-brace-format
+msgid ""
+"Multiple profiles defined with name {name}. Which profile is used is "
+"undefined."
+msgstr "{name} という名前で定義されたプロファイルが複数あります。使用されているプロファイルが定義解除されました。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:570
+#, perl-brace-format
+msgid "There is no profile named {name}"
+msgstr "{name} という名前のプロファイルがありません"
+
+#: ../lib/Sys/VirtConvert/Config.pm:575
+#, perl-brace-format
+msgid "Profile {name} doesn't specify an output method."
+msgstr "プロファイル {name} が出力方法を指定していません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:594
+#, perl-brace-format
+msgid "Profile {name} doesn't specify output storage."
+msgstr "プロファイル {name} が出力ストレージを指定していません。"
+
+#: ../lib/Sys/VirtConvert/Config.pm:607
+#, perl-brace-format
+msgid "Default network doesn't contain a mapping: {config}."
+msgstr "デフォルトのネットワークマッピングを含んでいません: {config}"
+
+#: ../lib/Sys/VirtConvert/Config.pm:617
+#, perl-brace-format
+msgid "Invalid network mapping: {config}"
+msgstr "無効なネットワークマッピング: {config}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:40
+#, perl-brace-format
+msgid "Didn't find initrd for kernel {path}"
+msgstr "カーネル {path} の initrd が見つかりませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:156
+#, perl-brace-format
+msgid "grub refers to {path}, which doesn't exist."
+msgstr "GRUB が {path} を参照していますが、存在しません。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:201
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:277
+#, perl-brace-format
+msgid "Kernel {kernel} is not under grub tree {grub}"
+msgstr "カーネル {kernel} が grub ツリー {grub} の下にありません"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:286
+#, perl-brace-format
+msgid "Didn't find grub entry for kernel {kernel}"
+msgstr "カーネル {kernel} の grub エントリーが見つかりませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:498
+msgid "No grub configuration found"
+msgstr "grub 設定が見つかりませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:512
+msgid "Failed to install user-custom packages"
+msgstr "ユーザー個別のパッケージのインストールに失敗しました"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:602
+msgid "Unable to find any valid modprobe configuration"
+msgstr "有効な modprobe の設定を何も見つけられませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:657
+#, perl-brace-format
+msgid "Don't know how to update {device}, which loads the {module} module."
+msgstr "{device} を更新する方法がわかりません。{module} モジュールを読み込みます。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:784
+msgid ""
+"Display driver was updated to cirrus, but unable to install cirrus driver. X"
+" may not function correctly"
+msgstr "ディスプレイのドライバーが cirrus に更新されましたが、cirrus ドライバーをインストールできませんでした。X が正しく動作しないかもしれません。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:838
+#, perl-brace-format
+msgid "Didn't find modules directory {modules} for kernel {path}\n"
+msgstr "カーネル {path} のモジュールディレクトリ {modules} を見つけられませんでした\n"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:846
+#, perl-brace-format
+msgid "Couldn't guess kernel version number from path for kernel {path}\n"
+msgstr "カーネル {path} のパスからカーネルのバージョン番号を推測できませんでした\n"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:945
+msgid "Couldn't determine version of installed kernel"
+msgstr "インストール済みのカーネルのバージョンがわかりませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:948
+#, perl-brace-format
+msgid "Failed to find a {name} package to install"
+msgstr "インストールする {name} パッケージが見つかりませんでした"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:955
+msgid ""
+"No bootable kernels installed, and no replacement is available.\n"
+"Unable to continue."
+msgstr "起動可能なカーネルがインストールされていません。また、代替物が利用できません。\n処理を続けることができません。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1106
+#, perl-brace-format
+msgid "Unable to open /etc/rc.local: {error}"
+msgstr "/etc/rc.local を開けません: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1159
+#, perl-brace-format
+msgid ""
+"VirtualBox Guest Additions were detected, but uninstallation failed. The "
+"error message was: {error}"
+msgstr "VirtualBox Guest Additions が検出されましたが、アンインストールに失敗しました。エラーメッセージ: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1237
+#, perl-brace-format
+msgid ""
+"Failed to install replacement dependencies for {lib}. Package will not be "
+"uninstalled. Error was: {error}"
+msgstr "{lib} に対して置換する依存パッケージのインストールに失敗しました。パッケージはアンインストールされません。エラーは次のとおりです: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1257
+#, perl-brace-format
+msgid ""
+"VMware Tools was detected, but uninstallation failed. The error message was:"
+" {error}"
+msgstr "VMware Tools を検知しましたが、アンインストールに失敗しました。エラーメッセージ: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1340
+#, perl-brace-format
+msgid "{name} capability not found in configuration"
+msgstr "{name} capability が設定に見つかりません"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1359
+#, perl-brace-format
+msgid ""
+"Unrecognised format for {field} in config: {value}. {field} must be in the "
+"format [epoch:]version[-release]."
+msgstr "{field} に認識されない形式が設定にあります: {value}. {field} は [epoch:]version[-release] の形式でなければいけません。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1587
+#, perl-brace-format
+msgid "Failed to install packages using up2date. Error message was: {error}"
+msgstr "up2date を使用したパッケージのインストールに失敗しました。エラーメッセージ: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1648
+#, perl-brace-format
+msgid "Failed to install packages using yum. Output was: {output}"
+msgstr "Yum を使用したパッケージのインストールに失敗しました。出力: {output}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1698
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:420
+#, perl-brace-format
+msgid ""
+"Installation failed because the following files referenced in the "
+"configuration file are required, but missing: {list}"
+msgstr "設定ファイルにおいて参照されている以下のファイルが必要です。見つからないため、インストールに失敗しました: {list}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:1954
+#, perl-brace-format
+msgid "Error running {command}: {error}"
+msgstr "{command} の実行中にエラーが発生しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:2208
+#, perl-brace-format
+msgid ""
+"{file} references unknown device {device}. This entry must be manually fixed"
+" after conversion."
+msgstr "{file} が未知のデバイス {device} を参照しています。このエントリーは変換後に手動で修正されなければいけません。"
+
+#: ../lib/Sys/VirtConvert/Converter/RedHat.pm:2316
+msgid "Didn't find mkinitrd or dracut. Unable to update initrd."
+msgstr "mkinitrd や dracut が見つかりません。initrd を更新できません。"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:127
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:130
+#, perl-brace-format
+msgid "Failed to open {hive} hive: {error}"
+msgstr "レジストリーファイル {hive} を開くのに失敗しました: {error}"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:184
+#, perl-brace-format
+msgid ""
+"Could not download the {hive} registry from this Windows guest. The exact "
+"error message was: {errmsg}"
+msgstr "この Windows のゲストOSからレジストリーファイル {hive} をダウンロードできませんでした。正確なエラーメッセージは次のとおりです: {errmsg}"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:249
+#, perl-brace-format
+msgid "Guest is not a supported version of Windows ({major}.{minor})"
+msgstr "ゲストOS Windows ({major}.{minor}) はサポートされるバージョンの Windows ではありません"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:321
+#, perl-brace-format
+msgid ""
+"There are no virtio drivers available for this version of Windows. The guest"
+" will be configured with a {block} block storage adapter and a {net} network"
+" adapter, but no drivers will be installed for them. If the {block} driver "
+"is not already installed in the guest, it will fail to boot. If the {net} "
+"driver is not already installed in the guest, you must install it manually "
+"after conversion."
+msgstr "このバージョンの Windows に対して指定されたディレクトリーにおいて virtio ドライバーが利用可能ではありません。仮想マシンは {block} ブロックストレージアダプターを用いて設定されますが、ドライバーはインストールされません。もし {block} ドライバーがすでにゲストOSにインストールされていなければ、起動に失敗します。もし {net} ドライバーがすでにゲストOSにインストールされていなければ、変換後に手動でインストールしなければいけません。"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:343
+#, perl-brace-format
+msgid ""
+"There is no virtio block driver available in the directory specified for "
+"this version of Windows. The guest will be configured with a {block} block "
+"storage adapter, but no driver will be installed for it. If the {block} "
+"driver is not already installed in the guest, it will fail to boot."
+msgstr "このバージョンの Windows に対して指定されたディレクトリーにおいて virtio ブロックドライバーが利用可能ではありません。仮想マシンが {block} ブロックストレージアダプターを用いて設定されますが、ドライバーはインストールされません。もし {block} ドライバーがすでにゲストOSにインストールされていなければ、起動に失敗します。"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:357
+#, perl-brace-format
+msgid ""
+"There is no virtio net driver available in the directory specified for this "
+"version of Windows. The guest will be configured with a {net} network "
+"adapter, but no driver will be installed for it. If the {net} driver is not "
+"already installed in the guest, you must install it manually after "
+"conversion."
+msgstr "このバージョンの Windows に対して指定されたディレクトリーにおいて virtio net ドライバーが利用可能ではありません。仮想マシンは {net} ネットワークドライバーを用いて設定されますが、ドライバーはインストールされません。もし {net} ドライバーがすでにゲストOSにインストールされていなければ、変換後に手動でインストールしなければいけません。"
+
+#: ../lib/Sys/VirtConvert/Converter/Windows.pm:445
+#, perl-brace-format
+msgid ""
+"The RHEV Application Provisioning Tool cannot be configured because the "
+"following files referenced in the configuration file are required, but "
+"missing: {list}"
+msgstr "設定ファイルにおいて参照されている以下のファイルが必要ですが、存在しないので、RHEV Application Provisioning Tool が設定できません: {list}"
+
+#: ../lib/Sys/VirtConvert/GuestfsHandle.pm:99
+msgid ""
+"Failed to launch guestfs appliance. Try running again with "
+"LIBGUESTFS_DEBUG=1 for more information"
+msgstr "guestfs アプライアンスの起動に失敗しました。詳細は LIBGUESTFS_DEBUG=1 にして再試行してください。"
+
+#: ../lib/Sys/VirtConvert/GuestfsHandle.pm:177
+msgid "libguestfs did not shut down cleanly"
+msgstr "libguestfs が正常に終了しませんでした"
+
+#: ../p2v/server/virt-p2v-server.pl:94
+#, perl-brace-format
+msgid "{program} started."
+msgstr "{program} を開始しました。"
+
+#: ../p2v/server/virt-p2v-server.pl:102
+#, perl-brace-format
+msgid "Unable to open log file {file}: {error}"
+msgstr "ログファイル {file} を開けません: {error}"
+
+#: ../p2v/server/virt-p2v-server.pl:257
+#, perl-brace-format
+msgid "Invalid allocation policy {policy} in profile.\n"
+msgstr "無効な割り当てポリシー {policy} がプロファイルにあります。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:328
+#, perl-brace-format
+msgid "Invalid profile: {profile}\n"
+msgstr "無効なプロファイル: {profile}\n"
+
+#: ../p2v/server/virt-p2v-server.pl:341
+#, perl-brace-format
+msgid "Profile {profile} specifies invalid method {method}.\n"
+msgstr "プロファイル {profile} が無効なメソッド {method} を指定しています。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:386 ../v2v/virt-v2v.pl:648
+#, perl-brace-format
+msgid "{name} configured with virtio drivers."
+msgstr "{name} は virtio ドライバーを用いて設定されました。"
+
+#: ../p2v/server/virt-p2v-server.pl:389 ../v2v/virt-v2v.pl:651
+#, perl-brace-format
+msgid "{name} configured with virtio storage only."
+msgstr "{name} は virtio ストレージのみを用いて設定されました。"
+
+#: ../p2v/server/virt-p2v-server.pl:392 ../v2v/virt-v2v.pl:654
+#, perl-brace-format
+msgid "{name} configured with virtio networking only."
+msgstr "{name} は virtio ネットワークのみを用いて設定されました。"
+
+#: ../p2v/server/virt-p2v-server.pl:395 ../v2v/virt-v2v.pl:657
+#, perl-brace-format
+msgid "{name} configured without virtio drivers."
+msgstr "{name} は virtio ドライバーを用いずに設定されました。"
+
+#: ../p2v/server/virt-p2v-server.pl:422
+msgid "Client closed connection unexpectedly.\n"
+msgstr "クライアントが予期せずコネクションを終了しました。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:435
+#, perl-brace-format
+msgid "Error messages were written to {file}."
+msgstr "エラーメッセージが {file} に書き込まれました。"
+
+#: ../p2v/server/virt-p2v-server.pl:440
+#, perl-brace-format
+msgid "{program} exited."
+msgstr "{program} を終了しました。"
+
+#: ../p2v/server/virt-p2v-server.pl:466
+msgid "No root device found in this operating system image.\n"
+msgstr "このオペレーティングシステムにおいてルートデバイスがありません。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:469
+msgid "Multiboot operating systems are not supported.\n"
+msgstr "マルチブートのオペレーティングシステムはサポートされません。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:494
+#, perl-brace-format
+msgid "Received: {command} {args}"
+msgstr "受信済み: {command} {args}"
+
+#: ../p2v/server/virt-p2v-server.pl:510
+msgid "Unexpected EOF while receiving data.\n"
+msgstr "データの受信中に予期しない EOF がありました。\n"
+
+#: ../p2v/server/virt-p2v-server.pl:521 ../p2v/server/virt-p2v-server.pl:533
+#: ../p2v/server/virt-p2v-server.pl:541
+#, perl-brace-format
+msgid "Sent: {msg}"
+msgstr "送信済み: {msg}"
+
+#: ../v2v/virt-v2v.pl:394
+msgid "Use -ic or -oc to specify an input or an output connection"
+msgstr "入力または出力コネクションを指定するには -ic または -oc を使用します"
+
+#: ../v2v/virt-v2v.pl:416
+msgid "--network may only be specified once"
+msgstr "--network は1つだけ指定できます"
+
+#: ../v2v/virt-v2v.pl:419 ../v2v/virt-v2v.pl:430
+msgid "--network and --bridge are mutually exclusive"
+msgstr "--network と --bridge は相互排他です"
+
+#: ../v2v/virt-v2v.pl:427
+msgid "--bridge may only be specified once"
+msgstr "--bridge は1つだけ指定できます"
+
+#: ../v2v/virt-v2v.pl:455
+#, perl-brace-format
+msgid "allocation scheme must be {sparse} or {preallocated}"
+msgstr "割り当てスキーマは {sparse} または {preallocated} でなければいけません"
+
+#: ../v2v/virt-v2v.pl:470
+msgid "Defined target profiles:"
+msgstr "定義されたターゲットのプロファイル:"
+
+#: ../v2v/virt-v2v.pl:487
+msgid "vmtype must be either 'desktop' or 'server'."
+msgstr "vmtype は 'desktop' または 'server' のどちらかでなければいけません。"
+
+#: ../v2v/virt-v2v.pl:504
+msgid "You must specify an output storage location"
+msgstr "出力先ストレージの場所を指定しなければいけません"
+
+#: ../v2v/virt-v2v.pl:518
+#, perl-brace-format
+msgid "{output} is not a valid output method."
+msgstr "{output} は有効な出力方式ではありません。"
+
+#: ../v2v/virt-v2v.pl:526 ../v2v/virt-v2v.pl:555
+msgid "You must specify a filename"
+msgstr "ファイル名を指定しなければいけません"
+
+#: ../v2v/virt-v2v.pl:531 ../v2v/virt-v2v.pl:560
+#, perl-brace-format
+msgid "{modulename} only takes a single filename."
+msgstr "{modulename} はファイル名を1つだけ指定できます。"
+
+#: ../v2v/virt-v2v.pl:540
+msgid "You must specify a guest"
+msgstr "仮想マシンを指定しなければいけません"
+
+#: ../v2v/virt-v2v.pl:548
+#, perl-brace-format
+msgid "{modulename} only takes a single domain name."
+msgstr "{modulename} は仮想マシン名を1つだけ指定できます。"
+
+#: ../v2v/virt-v2v.pl:568
+#, perl-brace-format
+msgid "{input} is not a valid input method."
+msgstr "{input} は有効な入力方式ではありません。"
+
+#: ../v2v/virt-v2v.pl:579
+#, perl-brace-format
+msgid "Domain {name} already exists on the target."
+msgstr "仮想マシン {name} がすでに転送先に存在します。"
+
+#: ../v2v/virt-v2v.pl:592
+msgid "Guest doesn't define any storage devices"
+msgstr "仮想マシンがストレージボリュームを何も指定していません"
+
+#: ../v2v/virt-v2v.pl:677
+#, perl-brace-format
+msgid "Received signal {sig}. Exiting."
+msgstr "シグナル {sig} を受信しました。終了します。"
+
+#: ../v2v/virt-v2v.pl:702
+msgid "No root device found in this operating system image."
+msgstr "このオペレーティングシステムのイメージにルートデバイスがありません。"
+
+#: ../v2v/virt-v2v.pl:712
+msgid ""
+"Dual- or multi-boot operating system detected. Choose the root filesystem\n"
+"that contains the main operating system from the list below:\n"
+msgstr "起動可能なオペレーティングシステムを複数検知しました。\nメインのオペレーティングシステムを含むルートファイルシステムを\n以下の一覧から選択してください:\n"
+
+#: ../v2v/virt-v2v.pl:727
+#, perl-brace-format
+msgid "Enter number between 1 and {i}: "
+msgstr "1 から {i} の数を入力してください: "
+
+#: ../v2v/virt-v2v.pl:733
+msgid ""
+"Multi-boot operating systems are not supported by virt-v2v. Use the --root "
+"option to change how virt-v2v handles this."
+msgstr "マルチブートのオペレーティングシステムは virt-v2v によりサポートされません。virt-v2v が処理する方法を変更するために --root オプションを使用してください。"
+
+#: ../v2v/virt-v2v.pl:749 ../v2v/virt-v2v.pl:763
+#, perl-brace-format
+msgid "Root device \"{choice}\" not found. Roots found were: {roots}."
+msgstr "ルートデバイス \"{choice}\" がありません。見つかったルートは次のものです: {roots} 。"
+
+#: ../v2v/virt-v2v.pl:769
+#, perl-brace-format
+msgid "Unknown --root option \"{choice}\"."
+msgstr "未知の --root オプション \"{choice}\" です。"

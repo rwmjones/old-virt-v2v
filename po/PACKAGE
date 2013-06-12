@@ -3,16 +3,22 @@
 # Add more languages here!  Beware that this is a makefile snippet and
 # you have to adhere to make syntax.
 LINGUAS = \
-    es \
+    de \
     es_ES \
+    es \
+    eu \
     fr \
+    hu \
     it \
+    ja \
+    nb \
     nl \
     or \
     pl \
     pt_BR \
     ru \
     te \
+    tr \
     uk \
     zh_CN \
     zh_TW
