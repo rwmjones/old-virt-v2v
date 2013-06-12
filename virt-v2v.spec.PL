@@ -76,7 +76,6 @@ BuildRequires:  perl(Term::ProgressBar)
 BuildRequires:  perl(URI)
 BuildRequires:  perl(XML::DOM)
 BuildRequires:  perl(XML::DOM::XPath)
-BuildRequires:  perl(XML::Writer)
 
 BuildRequires:  perl-Sys-Guestfs >= 1:1.14.0
 BuildRequires:  perl-hivex >= 1.2.2
