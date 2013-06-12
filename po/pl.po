@@ -1,24 +1,23 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Red Hat Inc.
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
-# mdbooth <mbooth@redhat.com>, 2011.
-# Piotr Drąg <piotrdrag@gmail.com>, 2011-2012.
+# mdbooth <mbooth@redhat.com>, 2011
+# Piotr Drąg <piotrdrag@gmail.com>, 2011-2012
 msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
-"Report-Msgid-Bugs-To: libguestfs@redhat.com\n"
+"Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
 "POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2012-09-26 16:21+0000\n"
-"Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
+"PO-Revision-Date: 2013-06-12 10:23+0000\n"
+"Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: Polish <trans-pl@lists.fedoraproject.org>\n"
-"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #, perl-brace-format
 msgid "{e} (ignored)\n"
@@ -30,12 +29,7 @@ msgid ""
 "transfered and a domain created for it, but it may not operate correctly "
 "without manual reconfiguration. The domain will present all storage devices "
 "as {block}, all network interfaces as {net} and the host as {arch}."
-msgstr ""
-"Nie można przekonwertować tego goszczącego systemu operacyjnego. Jego "
-"pamięci masowe zostaną przeniesione i zostanie utworzona dla niego domena, "
-"ale może nie działać poprawnie bez ręcznego ponownego skonfigurowania. "
-"Domena będzie przedstawiała wszystkie urządzenia pamięci masowych jako "
-"{block}, wszystkie interfejsy sieciowe jako {net}, a gospodarza jako {arch}."
+msgstr "Nie można przekonwertować tego goszczącego systemu operacyjnego. Jego pamięci masowe zostaną przeniesione i zostanie utworzona dla niego domena, ale może nie działać poprawnie bez ręcznego ponownego skonfigurowania. Domena będzie przedstawiała wszystkie urządzenia pamięci masowych jako {block}, wszystkie interfejsy sieciowe jako {net}, a gospodarza jako {arch}."
 
 #, perl-brace-format
 msgid "augeas error for {file}: {error}"
@@ -60,9 +54,7 @@ msgstr "Utworzenie katalogu {dir} się nie powiodło: {error}"
 #, perl-brace-format
 msgid ""
 "Failed to create new volume {path} with format {format}. Error was: {error}"
-msgstr ""
-"Utworzenie nowego woluminu {path} w formacie {format} się nie powiodło. "
-"Błąd: {error}"
+msgstr "Utworzenie nowego woluminu {path} w formacie {format} się nie powiodło. Błąd: {error}"
 
 #, perl-brace-format
 msgid "Unable to open {path} for writing: {error}"
@@ -81,8 +73,7 @@ msgstr "RHEV nie może obsługiwać woluminów w formacie {format}"
 
 #, perl-brace-format
 msgid "Unable to move volume from temporary location {tmpdir} to {dir}"
-msgstr ""
-"Nie można przenieść woluminu z położenia tymczasowego {tmpdir} do {dir}"
+msgstr "Nie można przenieść woluminu z położenia tymczasowego {tmpdir} do {dir}"
 
 #, perl-brace-format
 msgid "Error whilst attempting to remove temporary directory {dir}"
@@ -99,9 +90,7 @@ msgstr "Nie można zmienić właściciela {mountdir} na vdsm:kvm"
 msgid ""
 "Failed to mount {path}. Command exited with status {status}. Output was: "
 "{output}"
-msgstr ""
-"Zamontowanie {path} się nie powiodło. Polecenie zostało zakończone ze stanem "
-"{status}. Wyjście: {output}"
+msgstr "Zamontowanie {path} się nie powiodło. Polecenie zostało zakończone ze stanem {status}. Wyjście: {output}"
 
 #, perl-brace-format
 msgid "Unable to open {mountdir}: {error}"
@@ -110,8 +99,7 @@ msgstr "Nie można otworzyć {mountdir}: {error}"
 #, perl-brace-format
 msgid ""
 "{domain_path} contains multiple possible domains. It may only contain one."
-msgstr ""
-"{domain_path} zawiera wiele możliwych domen. Może zawierać tylko jedną."
+msgstr "{domain_path} zawiera wiele możliwych domen. Może zawierać tylko jedną."
 
 #, perl-brace-format
 msgid "{domain_path} does not contain an initialised storage domain."
@@ -121,17 +109,13 @@ msgstr "{domain_path} nie zawiera zainicjowanej domeny pamięci masowej."
 msgid ""
 "{domain_path} has not been attached to a RHEV data center ({path} does not "
 "exist)."
-msgstr ""
-"{domain_path} nie została dołączona do centrum danych RHEV ({path} nie "
-"istnieje)."
+msgstr "{domain_path} nie została dołączona do centrum danych RHEV ({path} nie istnieje)."
 
 #, perl-brace-format
 msgid ""
 "Failed to unmount {path}. Command exited with status {status}. Output was: "
 "{output}"
-msgstr ""
-"Odmontowanie {path} się nie powiodło. Polecenie zostało zakończone ze stanem "
-"{status}. Wyjście: {output}"
+msgstr "Odmontowanie {path} się nie powiodło. Polecenie zostało zakończone ze stanem {status}. Wyjście: {output}"
 
 #, perl-brace-format
 msgid "Failed to remove mount directory {dir}: {error}"
@@ -141,10 +125,7 @@ msgid ""
 "This guest requires a password for connection to its display, but this is "
 "not supported by RHEV. The converted guest's display will not require a "
 "separate password to connect."
-msgstr ""
-"Ten gość wymaga hasła do połączenia z ekranem, co nie jest obsługiwane przez "
-"RHEV. Ekran przekonwertowanego gościa nie będzie wymagał oddzielnego hasła "
-"do połączenia."
+msgstr "Ten gość wymaga hasła do połączenia z ekranem, co nie jest obsługiwane przez RHEV. Ekran przekonwertowanego gościa nie będzie wymagał oddzielnego hasła do połączenia."
 
 #, perl-brace-format
 msgid "Unsupported architecture: {arch}"
@@ -157,9 +138,7 @@ msgstr "Nieznana wersja systemu Windows: {major}.{minor}"
 #, perl-brace-format
 msgid ""
 "Unknown NIC model {driver} for {dev}. NIC will be {default} when imported."
-msgstr ""
-"Nieznany model NIC {driver} dla {dev}. NIC będzie wynosić {default} po "
-"zaimportowaniu."
+msgstr "Nieznany model NIC {driver} dla {dev}. NIC będzie wynosić {default} po zaimportowaniu."
 
 #, perl-brace-format
 msgid "Failed to open {path}: {error}"
@@ -185,9 +164,7 @@ msgstr "Nie można wykonać qemu-img: {error}\n"
 msgid ""
 "Unexpected output from qemu-img:\n"
 "{output}\n"
-msgstr ""
-"Nieoczekiwane wyjście z qemu-img:\n"
-"{output}\n"
+msgstr "Nieoczekiwane wyjście z qemu-img:\n{output}\n"
 
 #, perl-brace-format
 msgid "qemu-img returned unexpected virtual size: {size}\n"
@@ -195,32 +172,12 @@ msgstr "qemu-img zwróciło nieoczekiwany rozmiar wirtualny: {size}\n"
 
 #, perl-brace-format
 msgid ""
-"Failed to retrieve volume information for {path}. This could be because the "
-"volume doesn't exist, or because the volume exists but is not contained in a "
-"storage pool.\n"
+"Failed to retrieve volume information for {path}. This could be because the volume doesn't exist, or because the volume exists but is not contained in a storage pool.\n"
 "\n"
-"In the latter case, you must create a storage pool of the correct type to "
-"contain the volume. Note that you do not have to re-create or move the "
-"volume itself, only define a pool which contains it. libvirt will "
-"automatically detect the volume when it scans the pool after creation.\n"
+"In the latter case, you must create a storage pool of the correct type to contain the volume. Note that you do not have to re-create or move the volume itself, only define a pool which contains it. libvirt will automatically detect the volume when it scans the pool after creation.\n"
 "\n"
-"virt-manager is able to create storage pools. Select Edit->Connection "
-"Details from the application menu. Storage pools are displayed in the "
-"Storage tab."
-msgstr ""
-"Pobranie informacji o woluminie dla {path} się nie powiodło. Może być to "
-"powodowane tym, że wolumin nie istnieje lub tym, że wolumin istnieje, ale "
-"nie jest zawarty w puli pamięci masowej.\n"
-"\n"
-"W drugim przypadku należy utworzyć pulę pamięci masowej poprawnego typu, aby "
-"zawrzeć w niej wolumin. Proszę zauważyć, że nie trzeba ponownie tworzyć lub "
-"przenosić samego woluminu, a tylko określić pulę, która go zawiera. "
-"Biblioteka libvirt automatycznie wykryje wolumin, kiedy przeskanuje pulę po "
-"utworzeniu.\n"
-"\n"
-"Program virt-manager może tworzyć pule pamięci masowej. Należy wybrać Edycja-"
-">Informacje o połączeniu z menu aplikacji. Pule pamięci masowej są "
-"wyświetlane w karcie Pamięć masowa."
+"virt-manager is able to create storage pools. Select Edit->Connection Details from the application menu. Storage pools are displayed in the Storage tab."
+msgstr "Pobranie informacji o woluminie dla {path} się nie powiodło. Może być to powodowane tym, że wolumin nie istnieje lub tym, że wolumin istnieje, ale nie jest zawarty w puli pamięci masowej.\n\nW drugim przypadku należy utworzyć pulę pamięci masowej poprawnego typu, aby zawrzeć w niej wolumin. Proszę zauważyć, że nie trzeba ponownie tworzyć lub przenosić samego woluminu, a tylko określić pulę, która go zawiera. Biblioteka libvirt automatycznie wykryje wolumin, kiedy przeskanuje pulę po utworzeniu.\n\nProgram virt-manager może tworzyć pule pamięci masowej. Należy wybrać Edycja->Informacje o połączeniu z menu aplikacji. Pule pamięci masowej są wyświetlane w karcie Pamięć masowa."
 
 #, perl-brace-format
 msgid "Failed to retrieve storage volume {path}: {error}"
@@ -228,8 +185,7 @@ msgstr "Pobranie woluminu pamięci masowej {path} się nie powiodło: {error}"
 
 #, perl-brace-format
 msgid "Failed to retrieve storage pool for volume {path}: {error}"
-msgstr ""
-"Pobranie puli pamięci masowej dla woluminu {path} się nie powiodło: {error}"
+msgstr "Pobranie puli pamięci masowej dla woluminu {path} się nie powiodło: {error}"
 
 #, perl-brace-format
 msgid "Pool XML has no type attribute: {xml}"
@@ -276,9 +232,7 @@ msgstr "Nie odebrano pełnego woluminu. Odebrano {received} z {total} bajtów."
 msgid ""
 "Storage volume {name} already exists on the target. NOT copying it again. "
 "Delete the volume and retry to copy again."
-msgstr ""
-"Wolumin pamięci masowej {name} już istnieje w celu. NIE zostanie skopiowany "
-"ponownie. Należy usunąć wolumin i ponowić próbę skopiowania."
+msgstr "Wolumin pamięci masowej {name} już istnieje w celu. NIE zostanie skopiowany ponownie. Należy usunąć wolumin i ponowić próbę skopiowania."
 
 #, perl-brace-format
 msgid "Unable to parse URI authority: {auth}"
@@ -287,9 +241,7 @@ msgstr "Nie można przetworzyć upoważnienia adresu URI: {auth}"
 msgid ""
 "Specifying a password in the connection URI is not supported. It has been "
 "ignored."
-msgstr ""
-"Podanie hasła w adresie URI połączenia nie jest obsługiwane. Zostanie "
-"zignorowane."
+msgstr "Podanie hasła w adresie URI połączenia nie jest obsługiwane. Zostanie zignorowane."
 
 #, perl-brace-format
 msgid "Failed to connect to {uri}: {error}"
@@ -315,9 +267,7 @@ msgstr "Ignorowanie urządzenia wymiennego {device} o nieznanym typie {type}."
 msgid ""
 "Only 4 IDE devices are supported, but this guest has {number}. The guest "
 "will not operate correctly without manual reconfiguration."
-msgstr ""
-"Obsługiwane są tylko cztery urządzenia IDE, ale ten gość posiada ich "
-"{number}. Gość nie będzie działał poprawnie bez ręcznej konfiguracji."
+msgstr "Obsługiwane są tylko cztery urządzenia IDE, ale ten gość posiada ich {number}. Gość nie będzie działał poprawnie bez ręcznej konfiguracji."
 
 #, perl-brace-format
 msgid "Automatically cleaning up volume {vol} from pool {pool}."
@@ -373,9 +323,7 @@ msgstr "Umieszczanie w pamięci podręcznej {name}: {size} bajtów"
 msgid ""
 "When writing to an SSH connection, virt-v2v can only currently convert "
 "volumes to raw format"
-msgstr ""
-"virt-v2v może obecnie konwertować woluminy tylko na surowy format podczas "
-"zapisywania do połączenia SSH"
+msgstr "virt-v2v może obecnie konwertować woluminy tylko na surowy format podczas zapisywania do połączenia SSH"
 
 #, perl-brace-format
 msgid "Failed to connect to {host}: {error}"
@@ -403,9 +351,7 @@ msgstr "Serwer {server} zaprezentował certyfikat SSL dla {commonname}"
 
 #, perl-brace-format
 msgid "SSL Certificate presented by {host} will not be valid until {date}."
-msgstr ""
-"Certyfikat SSL zaprezentowany przez {host} nie będzie prawidłowy przed "
-"{date}."
+msgstr "Certyfikat SSL zaprezentowany przez {host} nie będzie prawidłowy przed {date}."
 
 #, perl-brace-format
 msgid "SSL Certificate presented by {host} expired on {date}."
@@ -415,9 +361,7 @@ msgstr "Certyfikat SSL zaprezentowany przez {host} wygasł {date}."
 msgid ""
 "Authentication is required to connect to {server} and no credentials were "
 "found in .netrc."
-msgstr ""
-"Wymagane jest uwierzytelnienie, aby połączyć się z {server}, a nie "
-"odnaleziono danych uwierzytelniających w pliku .netrc."
+msgstr "Wymagane jest uwierzytelnienie, aby połączyć się z {server}, a nie odnaleziono danych uwierzytelniających w pliku .netrc."
 
 msgid "virt-v2v cannot write to an ESX connection"
 msgstr "virt-v2v nie może zapisywać do połączenia ESX"
@@ -427,11 +371,9 @@ msgstr "Nie można zapisać do połączenia ESX"
 
 #, perl-brace-format
 msgid ""
-"Authentication error connecting to {server}. Used credentials for {username} "
-"from .netrc."
-msgstr ""
-"Błąd uwierzytelnienia podczas łączenia się z {server}. Użyto danych "
-"uwierzytelniających dla {username} z pliku .netrc."
+"Authentication error connecting to {server}. Used credentials for {username}"
+" from .netrc."
+msgstr "Błąd uwierzytelnienia podczas łączenia się z {server}. Użyto danych uwierzytelniających dla {username} z pliku .netrc."
 
 #, perl-brace-format
 msgid "Failed to connect to ESX server: {error}"
@@ -453,9 +395,7 @@ msgstr "Nie można przetworzyć pliku konfiguracji {path}: {error}"
 msgid ""
 "Failed to create transfer iso. Command output was:\n"
 "{output}"
-msgstr ""
-"Utworzenie pliku ISO przesyłania się nie powiodło. Wyjście polecenia:\n"
-"{output}"
+msgstr "Utworzenie pliku ISO przesyłania się nie powiodło. Wyjście polecenia:\n{output}"
 
 #, perl-brace-format
 msgid "app entry in config doesn't contain a path: {xml}"
@@ -465,8 +405,7 @@ msgstr "wpis aplikacji w konfiguracji nie zawiera ścieżki: {xml}"
 msgid ""
 "Capability in config contains a dependency with no {property} attribute: "
 "{xml}"
-msgstr ""
-"Możliwość w konfiguracji zawiera zależność bez atrybutu {property}: {xml}"
+msgstr "Możliwość w konfiguracji zawiera zależność bez atrybutu {property}: {xml}"
 
 #, perl-brace-format
 msgid "No config specified. No {type} match for {search}."
@@ -483,10 +422,7 @@ msgstr "Nie wykryto systemu operacyjnego"
 msgid ""
 "No mapping found for {type} interface {name} in config file. The converted "
 "guest may not start until its network interface is updated."
-msgstr ""
-"Nie odnaleziono mapowania dla {type} interfejsu {name} w pliku konfiguracji. "
-"Przekonwertowany gość może się nie uruchamiać, dopóki jego interfejs "
-"sieciowy nie zostanie zaktualizowany."
+msgstr "Nie odnaleziono mapowania dla {type} interfejsu {name} w pliku konfiguracji. Przekonwertowany gość może się nie uruchamiać, dopóki jego interfejs sieciowy nie zostanie zaktualizowany."
 
 #, perl-brace-format
 msgid "Invalid network mapping in config: {config}."
@@ -500,7 +436,7 @@ msgstr "Nieznany typ interfejsu {type} w mapowaniu sieci: {config}"
 msgid ""
 "Multiple profiles defined with name {name}. Which profile is used is "
 "undefined."
-msgstr ""
+msgstr "Określono wiele profili o nazwie {name}. Nie określono, który profil jest używany."
 
 #, perl-brace-format
 msgid "There is no profile named {name}"
@@ -522,9 +458,9 @@ msgstr "Domyślna sieć nie zawiera mapowania: {config}."
 msgid "Invalid network mapping: {config}"
 msgstr "Nieprawidłowe mapowanie sieci: {config}"
 
-#, fuzzy, perl-brace-format
+#, perl-brace-format
 msgid "Didn't find initrd for kernel {path}"
-msgstr "Nie odnaleziono katalogu modułów {modules} dla jądra {path}\n"
+msgstr "Nie odnaleziono initrd dla jądra {path}"
 
 #, perl-brace-format
 msgid "grub refers to {path}, which doesn't exist."
@@ -532,18 +468,17 @@ msgstr "Program GRUB odwołuje się do {path}, który nie istnieje."
 
 #, perl-brace-format
 msgid "Kernel {kernel} is not under grub tree {grub}"
-msgstr ""
+msgstr "Jądro {kernel} nie znajduje się w drzewie programu GRUB {grub}"
 
-#, fuzzy, perl-brace-format
+#, perl-brace-format
 msgid "Didn't find grub entry for kernel {kernel}"
-msgstr "Nie odnaleziono katalogu modułów {modules} dla jądra {path}\n"
+msgstr "Nie odnaleziono wpisu programu GRUB dla jądra {kernel}"
 
-#, fuzzy
 msgid "Failed to install non-EFI grub2"
-msgstr "Zainstalowanie własnych pakietów użytkownika się nie powiodło"
+msgstr ""
 
 msgid "No grub configuration found"
-msgstr ""
+msgstr "Nie odnaleziono konfiguracji programu GRUB"
 
 msgid "Failed to install user-custom packages"
 msgstr "Zainstalowanie własnych pakietów użytkownika się nie powiodło"
@@ -553,15 +488,12 @@ msgstr "Nie można odnaleźć żadnej prawidłowej konfiguracji modprobe"
 
 #, perl-brace-format
 msgid "Don't know how to update {device}, which loads the {module} module."
-msgstr ""
-"Nie wiadomo, jak zaktualizować {device}, które wczytuje moduł {module}."
+msgstr "Nie wiadomo, jak zaktualizować {device}, które wczytuje moduł {module}."
 
 msgid ""
-"Display driver was updated to cirrus, but unable to install cirrus driver. X "
-"may not function correctly"
-msgstr ""
-"Sterownik ekranu został zaktualizowany do sterownika cirrus, ale nie można "
-"go zainstalować. System X może nie działać poprawnie"
+"Display driver was updated to cirrus, but unable to install cirrus driver. X"
+" may not function correctly"
+msgstr "Sterownik ekranu został zaktualizowany do sterownika cirrus, ale nie można go zainstalować. System X może nie działać poprawnie"
 
 #, perl-brace-format
 msgid "Didn't find modules directory {modules} for kernel {path}\n"
@@ -572,18 +504,16 @@ msgid "Couldn't guess kernel version number from path for kernel {path}\n"
 msgstr "Nie można odgadnąć numeru wersji jądra ze ścieżki do jądra {path}\n"
 
 msgid "Couldn't determine version of installed kernel"
-msgstr ""
+msgstr "Nie można ustalić wersji zainstalowanego jądra"
 
-#, fuzzy, perl-brace-format
+#, perl-brace-format
 msgid "Failed to find a {name} package to install"
-msgstr "Zainstalowanie własnych pakietów użytkownika się nie powiodło"
+msgstr "Odnalezienie pakietu {name} do zainstalowania się nie powiodło"
 
 msgid ""
 "No bootable kernels installed, and no replacement is available.\n"
 "Unable to continue."
-msgstr ""
-"Nie zainstalowano startowych jąder i żaden zamiennik nie jest dostępny.\n"
-"Nie można kontynuować."
+msgstr "Nie zainstalowano startowych jąder i żaden zamiennik nie jest dostępny.\nNie można kontynuować."
 
 #, perl-brace-format
 msgid "Unable to open /etc/rc.local: {error}"
@@ -593,25 +523,19 @@ msgstr "Nie można otworzyć /etc/rc.local: {error}"
 msgid ""
 "VirtualBox Guest Additions were detected, but uninstallation failed. The "
 "error message was: {error}"
-msgstr ""
-"Wykryto dodatki dla gościa programu VirtualBox, ale odinstalowanie się nie "
-"powiodło. Komunikat błędu: {error}"
+msgstr "Wykryto dodatki dla gościa programu VirtualBox, ale odinstalowanie się nie powiodło. Komunikat błędu: {error}"
 
 #, perl-brace-format
 msgid ""
 "Failed to install replacement dependencies for {lib}. Package will not be "
 "uninstalled. Error was: {error}"
-msgstr ""
-"Zainstalowanie zastępczych zależności dla {lib} się nie powiodło. Pakiet nie "
-"zostanie odinstalowany. Komunikat błędu: {error}"
+msgstr "Zainstalowanie zastępczych zależności dla {lib} się nie powiodło. Pakiet nie zostanie odinstalowany. Komunikat błędu: {error}"
 
 #, perl-brace-format
 msgid ""
-"VMware Tools was detected, but uninstallation failed. The error message was: "
-"{error}"
-msgstr ""
-"Wykryto VMware Tools, ale odinstalowanie się nie powiodło. Komunikat błędu: "
-"{error}"
+"VMware Tools was detected, but uninstallation failed. The error message was:"
+" {error}"
+msgstr "Wykryto VMware Tools, ale odinstalowanie się nie powiodło. Komunikat błędu: {error}"
 
 #, perl-brace-format
 msgid "{name} capability not found in configuration"
@@ -621,29 +545,21 @@ msgstr "Nie odnaleziono możliwości {name} w konfiguracji"
 msgid ""
 "Unrecognised format for {field} in config: {value}. {field} must be in the "
 "format [epoch:]version[-release]."
-msgstr ""
-"Nierozpoznany format dla {field} w konfiguracji: {value}. {field} musi być w "
-"formacie [epoch:]version[-release]."
+msgstr "Nierozpoznany format dla {field} w konfiguracji: {value}. {field} musi być w formacie [epoch:]version[-release]."
 
 #, perl-brace-format
 msgid "Failed to install packages using up2date. Error message was: {error}"
-msgstr ""
-"Zainstalowanie pakietów używając programu up2date się nie powiodło. "
-"Komunikat błędu: {error}"
+msgstr "Zainstalowanie pakietów używając programu up2date się nie powiodło. Komunikat błędu: {error}"
 
 #, perl-brace-format
 msgid "Failed to install packages using yum. Output was: {output}"
-msgstr ""
-"Zainstalowanie pakietów używając programu yum się nie powiodło. Wyjście: "
-"{output}"
+msgstr "Zainstalowanie pakietów używając programu yum się nie powiodło. Wyjście: {output}"
 
 #, perl-brace-format
 msgid ""
 "Installation failed because the following files referenced in the "
 "configuration file are required, but missing: {list}"
-msgstr ""
-"Instalacja się nie powiodła, ponieważ następujące pliki wspomniane w pliku "
-"konfiguracji są wymagane, ale ich nie ma: {list}"
+msgstr "Instalacja się nie powiodła, ponieważ następujące pliki wspomniane w pliku konfiguracji są wymagane, ale ich nie ma: {list}"
 
 #, perl-brace-format
 msgid "Error running {command}: {error}"
@@ -651,16 +567,12 @@ msgstr "Błąd podczas wykonywania {command}: {error}"
 
 #, perl-brace-format
 msgid ""
-"{file} references unknown device {device}. This entry must be manually fixed "
-"after conversion."
-msgstr ""
-"{file} odnosi się do nieznanego urządzenia {device}. Ten wpis będzie musiał "
-"zostać ręcznie naprawiony po konwersji."
+"{file} references unknown device {device}. This entry must be manually fixed"
+" after conversion."
+msgstr "{file} odnosi się do nieznanego urządzenia {device}. Ten wpis będzie musiał zostać ręcznie naprawiony po konwersji."
 
 msgid "Didn't find mkinitrd or dracut. Unable to update initrd."
-msgstr ""
-"Nie odnaleziono polecenia mkinitrd lub dracut. Nie można zaktualizować "
-"obrazu initrd."
+msgstr "Nie odnaleziono polecenia mkinitrd lub dracut. Nie można zaktualizować obrazu initrd."
 
 #, perl-brace-format
 msgid "Failed to open {hive} hive: {error}"
@@ -670,9 +582,7 @@ msgstr "Otwarcie pliku typu \"hive\" {hive} się nie powiodło: {error}"
 msgid ""
 "Could not download the {hive} registry from this Windows guest. The exact "
 "error message was: {errmsg}"
-msgstr ""
-"Nie można pobrać rejestru {hive} z tego gościa Windows. Komunikat błędu: "
-"{errmsg}"
+msgstr "Nie można pobrać rejestru {hive} z tego gościa Windows. Komunikat błędu: {errmsg}"
 
 #, perl-brace-format
 msgid "Guest is not a supported version of Windows ({major}.{minor})"
@@ -680,19 +590,13 @@ msgstr "Gość nie jest obsługiwaną wersją systemu Windows ({major}.{minor})"
 
 #, perl-brace-format
 msgid ""
-"There are no virtio drivers available for this version of Windows. The guest "
-"will be configured with a {block} block storage adapter and a {net} network "
-"adapter, but no drivers will be installed for them. If the {block} driver is "
-"not already installed in the guest, it will fail to boot. If the {net} "
+"There are no virtio drivers available for this version of Windows. The guest"
+" will be configured with a {block} block storage adapter and a {net} network"
+" adapter, but no drivers will be installed for them. If the {block} driver "
+"is not already installed in the guest, it will fail to boot. If the {net} "
 "driver is not already installed in the guest, you must install it manually "
 "after conversion."
-msgstr ""
-"Brak dostępnych sterowników virtio dla tej wersji systemu Windows. Gość "
-"zostanie skonfigurowany za pomocą adaptera blokowej pamięci masowej {block} "
-"i adaptera sieci {net}, ale nie zostaną dla nich zainstalowane żadne "
-"sterowniki. Jeśli sterownik {block} nie jest już zainstalowany w gościu, to "
-"uruchomienie się nie powiedzie. Jeśli sterownik {net} nie jest już "
-"zainstalowany w gościu, to należy go zainstalować ręcznie po konwersji."
+msgstr "Brak dostępnych sterowników virtio dla tej wersji systemu Windows. Gość zostanie skonfigurowany za pomocą adaptera blokowej pamięci masowej {block} i adaptera sieci {net}, ale nie zostaną dla nich zainstalowane żadne sterowniki. Jeśli sterownik {block} nie jest już zainstalowany w gościu, to uruchomienie się nie powiedzie. Jeśli sterownik {net} nie jest już zainstalowany w gościu, to należy go zainstalować ręcznie po konwersji."
 
 #, perl-brace-format
 msgid ""
@@ -700,12 +604,7 @@ msgid ""
 "this version of Windows. The guest will be configured with a {block} block "
 "storage adapter, but no driver will be installed for it. If the {block} "
 "driver is not already installed in the guest, it will fail to boot."
-msgstr ""
-"Brak dostępnych sterowników virtio w katalogu podanym dla tej wersji systemu "
-"Windows. Gość zostanie skonfigurowany za pomocą adaptera blokowej pamięci "
-"masowej {block}, ale nie zostaną dla niego zainstalowane żadne sterowniki. "
-"Jeśli sterownik {block} nie jest już zainstalowany w gościu, to uruchomienie "
-"się nie powiedzie."
+msgstr "Brak dostępnych sterowników virtio w katalogu podanym dla tej wersji systemu Windows. Gość zostanie skonfigurowany za pomocą adaptera blokowej pamięci masowej {block}, ale nie zostaną dla niego zainstalowane żadne sterowniki. Jeśli sterownik {block} nie jest już zainstalowany w gościu, to uruchomienie się nie powiedzie."
 
 #, perl-brace-format
 msgid ""
@@ -714,29 +613,19 @@ msgid ""
 "adapter, but no driver will be installed for it. If the {net} driver is not "
 "already installed in the guest, you must install it manually after "
 "conversion."
-msgstr ""
-"Brak dostępnych sterowników virtio w katalogu podanym dla tej wersji systemu "
-"Windows. Gość zostanie skonfigurowany za pomocą adaptera sieci {net}, ale "
-"nie zostaną dla niego zainstalowane żadne sterowniki. Jeśli sterownik {net} "
-"nie jest już zainstalowany w gościu, to należy go zainstalować ręcznie po "
-"konwersji."
+msgstr "Brak dostępnych sterowników virtio w katalogu podanym dla tej wersji systemu Windows. Gość zostanie skonfigurowany za pomocą adaptera sieci {net}, ale nie zostaną dla niego zainstalowane żadne sterowniki. Jeśli sterownik {net} nie jest już zainstalowany w gościu, to należy go zainstalować ręcznie po konwersji."
 
 #, perl-brace-format
 msgid ""
 "The RHEV Application Provisioning Tool cannot be configured because the "
 "following files referenced in the configuration file are required, but "
 "missing: {list}"
-msgstr ""
-"Nie można skonfigurować narzędzia nadzorowania aplikacji RHEV, ponieważ "
-"następujące pliki wspomniane w pliku konfiguracji są wymagane, ale ich nie "
-"ma: {list}"
+msgstr "Nie można skonfigurować narzędzia nadzorowania aplikacji RHEV, ponieważ następujące pliki wspomniane w pliku konfiguracji są wymagane, ale ich nie ma: {list}"
 
 msgid ""
 "Failed to launch guestfs appliance. Try running again with "
 "LIBGUESTFS_DEBUG=1 for more information"
-msgstr ""
-"Uruchomienie przyrządu guestfs się nie powiodło. Należy spróbować ponownie "
-"za pomocą zmiennej LIBGUESTFS_DEBUG=1, aby uzyskać więcej informacji"
+msgstr "Uruchomienie przyrządu guestfs się nie powiodło. Należy spróbować ponownie za pomocą zmiennej LIBGUESTFS_DEBUG=1, aby uzyskać więcej informacji"
 
 msgid "libguestfs did not shut down cleanly"
 msgstr "Biblioteka libguestfs nie została poprawnie zakończona"
@@ -869,10 +758,7 @@ msgstr "Nie odnaleziono urządzenia root w tym obrazie sytemu operacyjnego."
 msgid ""
 "Dual- or multi-boot operating system detected. Choose the root filesystem\n"
 "that contains the main operating system from the list below:\n"
-msgstr ""
-"Wykryto systemy operacyjne \"Dualboot\" lub \"Multiboot\". Proszę wybrać\n"
-"główny system plików zawierający główny system operacyjny z poniższej "
-"listy:\n"
+msgstr "Wykryto systemy operacyjne \"Dualboot\" lub \"Multiboot\". Proszę wybrać\ngłówny system plików zawierający główny system operacyjny z poniższej listy:\n"
 
 #, perl-brace-format
 msgid "Enter number between 1 and {i}: "
@@ -881,34 +767,12 @@ msgstr "Proszę podać liczbę między 1 a {i}: "
 msgid ""
 "Multi-boot operating systems are not supported by virt-v2v. Use the --root "
 "option to change how virt-v2v handles this."
-msgstr ""
-"Systemy operacyjne \"Multiboot\" nie są obsługiwane przez program virt-v2v. "
-"Proszę użyć opcji --root, aby zmienić sposób obsługi."
+msgstr "Systemy operacyjne \"Multiboot\" nie są obsługiwane przez program virt-v2v. Proszę użyć opcji --root, aby zmienić sposób obsługi."
 
 #, perl-brace-format
 msgid "Root device \"{choice}\" not found. Roots found were: {roots}."
-msgstr ""
-"Nie odnaleziono głównego urządzenia \"{choice}\". Odnaleziono: {roots}."
+msgstr "Nie odnaleziono głównego urządzenia \"{choice}\". Odnaleziono: {roots}."
 
 #, perl-brace-format
 msgid "Unknown --root option \"{choice}\"."
 msgstr "Nieznana opcja --root \"{choice}\"."
-
-#~ msgid "grub refers to {path}, which doesn't exist\n"
-#~ msgstr "program GRUB odnosi się do {path}, który nie istnieje\n"
-
-#~ msgid "Grub entry {title} does not specify an initrd\n"
-#~ msgstr "Wpis programu GRUB {title} nie podaje initrd\n"
-
-#~ msgid "{filename}: could not read initrd format\n"
-#~ msgstr "{filename}: nie można odczytać formatu initrd\n"
-
-#~ msgid "Kernel version {version} doesn't have an initrd entry in grub."
-#~ msgstr "Wersja jądra {version} nie posiada wpisu initrd w programie GRUB."
-
-#~ msgid ""
-#~ "This version of virt-p2v-server does not support protocol version "
-#~ "{version}.\n"
-#~ msgstr ""
-#~ "Ta wersja programu virt-p2v-server nie obsługuje wersji protokołu "
-#~ "{version}.\n"
