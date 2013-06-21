@@ -91,7 +91,7 @@ class Connection
             end
 
             # parse the options section for capabilities
-            $~[1].scan(/{\s*(\S+)\s*:\s*([^}]*)}/).each { |label, caps|
+            $~[1].scan(/\{\s*(\S+)\s*:\s*([^}]*)\}/).each { |label, caps|
                 prop = case label
                     when 'MSG' then @msgs
                     when 'CONT' then @conts
