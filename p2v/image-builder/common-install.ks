@@ -52,3 +52,4 @@ device qla4xxx
 device qlogicfas408
 device stex
 device tmscsim
+device ums_cypress
