@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (C) 2010-2012, Red Hat, Inc.
+# Copyright (C) 2010-2013, Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ OPTIONS:
   -r    Primary yum repository.
   -u    Updates yum repository.
   -p    Proxy server (e.g. http://bob:s3cr3t@cache.example.com:3128/)
+  -v    Start P2V client with System V scripts (default is systemd)
   -h    Show this message.
 EOF
 }
@@ -55,9 +56,10 @@ onlyonce() {
     exit 1
 }
 
+inittype="systemd"
 norepos=0
 ksonly=0
-while getopts "a:d:f:hkl:np:r:u:w:" OPTION
+while getopts "a:d:f:hkl:np:r:u:vw:" OPTION
 do
     case $OPTION in
         a)
@@ -98,6 +100,9 @@ do
             [ -n "$updates" ] && onlyonce $OPTION
             updates="$OPTARG"
             ;;
+        v)
+            inittype="sysv"
+            ;;
         h)
             usage
             exit 0
@@ -121,6 +126,7 @@ label="${label:-Virt-P2V}"
 #arch=$(rpm --eval '%{_arch}')
 arch=i386
 kstmp=$(mktemp --tmpdir p2v-image-builder.XXXXXXXX)
+kstmp2=$(mktemp --tmpdir p2v-image-builder.XXXXXXXX)
 
 if pgrep -xl nscd; then
     die "Please stop nscd first"
@@ -128,15 +134,17 @@ fi
 
 rm -f "$kstmp"
 # combine recipe includes
-ksflatten --config "$datadir/virt-p2v-image.ks" --output "$kstmp"
+sed "s/__INIT_TYPE__/$inittype/g" "$datadir/virt-p2v-image.ks" > "$kstmp"
+ksflatten --config "$kstmp" --output "$kstmp2"
+rm -f $kstmp
 # XXX broken ksflatten leaves %include
-sed -i 's/^%include /#&/' "$kstmp"
+sed -i 's/^%include /#&/' "$kstmp2"
 
 addrepo() {
     if [ "$norepos" == 0 ]; then
-        echo -n "repo --name=$1 $2" >> "$kstmp"
-        [ -n "$proxy" -a -z "$3" ] && echo -n " --proxy=$proxy" >> "$kstmp"
-        echo >> "$kstmp"
+        echo -n "repo --name=$1 $2" >> "$kstmp2"
+        [ -n "$proxy" -a -z "$3" ] && echo -n " --proxy=$proxy" >> "$kstmp2"
+        echo >> "$kstmp2"
     fi
 }
 
@@ -198,7 +206,7 @@ if [ $ksonly == 0 ]; then
     case "$selinux_enforcing" in
         Enforcing) sudo /usr/sbin/setenforce Permissive ;;
         Permissive) ;;
-        *) if grep -q '^selinux --disabled' "$kstmp";
+        *) if grep -q '^selinux --disabled' "$kstmp2";
                then
                    warn "WARNING: SELinux disabled in kickstart"
                else
@@ -208,7 +216,7 @@ if [ $ksonly == 0 ]; then
     esac
 
     mkdir -p $cachedir
-    sudo livecd-creator -c "$kstmp" -f "$label" --cache="$cachedir" \
+    sudo livecd-creator -c "$kstmp2" -f "$label" --cache="$cachedir" \
         --compression-type=gzip
 
     # Clean up
@@ -216,7 +224,7 @@ if [ $ksonly == 0 ]; then
         sudo /usr/sbin/setenforce Enforcing
     fi
 else
-    cat $kstmp
+    cat $kstmp2
 fi
 
-rm -f $kstmp
+rm -f $kstmp2

@@ -8,7 +8,7 @@
 
 %post
 %include common-post.ks
-%include p2v-post.ks
+%include p2v-__INIT_TYPE__.ks
 %end
 
 %include common-minimizer.ks
