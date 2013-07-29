@@ -13,6 +13,7 @@ device-mapper
 passwd
 rpm
 /usr/sbin/lokkit
+firewalld
 
 # For useful debugging
 vim-minimal
@@ -50,5 +51,5 @@ strace
 ql2100-firmware
 ql2200-firmware
 ql23xx-firmware
-ql2400-firmware
-ql2500-firmware
+#ql2400-firmware
+#ql2500-firmware
