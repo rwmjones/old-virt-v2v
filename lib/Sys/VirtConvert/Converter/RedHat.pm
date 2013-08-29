@@ -493,12 +493,10 @@ sub convert_efi
     $g->part_set_gpt_type($device, 1, '21686148-6449-6E6F-744E-656564454649');
 
     # Delete the fstab entry for the EFI boot partition
-    eval {
-        foreach my $node ($g->aug_match("/files/etc/fstab/*[file = '/boot/efi']"))
-        {
-            $g->aug_rm($node);
-        }
-    };
+    foreach my $node ($g->aug_match("/files/etc/fstab/*[file = '/boot/efi']")) {
+        $g->aug_rm($node);
+    }
+    eval { $g->aug_save(); };
     augeas_error($g, $@) if $@;
 
     # Install grub2 in the BIOS boot partition. This overwrites the previous
