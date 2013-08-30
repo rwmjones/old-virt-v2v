@@ -141,7 +141,7 @@ sub convert
     $current_cs = sprintf("ControlSet%03i", $h_sys->value_dword($current_cs));
 
     _add_service_to_registry($h_sys, $current_cs) if $firstboot;
-    _disable_processor_drivers($h_sys, $current_cs);
+    _disable_services($h_sys, $current_cs);
 
     my ($block, $net) =
         _prepare_virtio_drivers($g, $root, $windir, $config,
@@ -447,8 +447,7 @@ sub _upload_files
     return 1;
 }
 
-# http://blogs.msdn.com/b/virtual_pc_guy/archive/2005/10/24/484461.aspx
-sub _disable_processor_drivers
+sub _disable_services
 {
     my $h = shift;
     my $current_cs = shift;
@@ -459,7 +458,13 @@ sub _disable_processor_drivers
         $services = $h->node_get_child($services, $_);
     }
 
-    foreach ('Processor', 'Intelppm') {
+    # Disable the Processor and Intelppm services
+    # http://blogs.msdn.com/b/virtual_pc_guy/archive/2005/10/24/484461.aspx
+
+    # Disable the rhelscsi service
+    # https://bugzilla.redhat.com/show_bug.cgi?id=809273
+
+    foreach ('Processor', 'Intelppm', 'rhelscsi') {
         my $node = $h->node_get_child($services, $_);
         next unless defined($node);
 
