@@ -209,11 +209,7 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   <app os='windows' name='rhsrvany'>
     <path>windows/rhsrvany.exe</path>
   </app>
-  <!-- This is a script, so arch-independent -->
-  <app os='windows' name='firstboot'>
-    <path>windows/firstboot.bat</path>
-  </app>
-  <app os='windows' name='firstbootapp'>
+  <app os='windows' name='rhev-apt'>
     <path>windows/rhev-apt.exe</path>
   </app>
 

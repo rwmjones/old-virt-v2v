@@ -143,7 +143,7 @@ mkdir -p $statedir/software
 windir=$statedir/software/windows
 mkdir -p $windir
 
-cp windows/rhsrvany.exe windows/firstboot.bat $windir/
+cp windows/rhsrvany.exe $windir/
 
 mkdir -p %{buildroot}%{_sysconfdir}
 cp v2v/virt-v2v.conf %{buildroot}%{_sysconfdir}/

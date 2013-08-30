@@ -118,10 +118,6 @@ sub convert
     # Find the Windows system root
     my $windir = $g->inspect_get_windows_systemroot($root);
 
-    # Note: disks are already mounted by main virt-v2v script.
-
-    my $firstboot = _upload_files ($g, $root, $windir, $tmpdir, $config);
-
     # Open the system and software hives
     my ($sys_guest, $sys_local) = _download_hive($g, $windir,
                                                  $tmpdir, 'system');
@@ -140,7 +136,15 @@ sub convert
     my $current_cs = $h_sys->node_get_value($select, 'Current');
     $current_cs = sprintf("ControlSet%03i", $h_sys->value_dword($current_cs));
 
-    _add_service_to_registry($h_sys, $current_cs) if $firstboot;
+    # Initialise firstboot
+    # N.B. This may fail, and $firstboot will be undef
+    my ($firstboot, $firstboot_tmp, $firstboot_dir) =
+        _configure_firstboot($g, $root, $config, $tmpdir, $h_sys, $current_cs);
+
+    _configure_rhev_apt($g, $root, $config, $firstboot, $firstboot_dir);
+
+    _close_firstboot($g, $firstboot, $firstboot_tmp, $firstboot_dir);
+
     _disable_services($h_sys, $current_cs);
 
     my ($block, $net) =
@@ -257,40 +261,6 @@ REGEDITS
                    major => $major_version,
                    minor => $g->inspect_get_minor_version($root));
     }
-
-    local *_map = sub {
-        if ($_[0] =~ /^HKEY_LOCAL_MACHINE\\SYSTEM(.*)/i) {
-            return ($h, $1);
-        } else {
-            die "can only make updates to the SYSTEM hive (key was: $_[0])\n"
-        }
-    };
-
-    reg_import ($io, \&_map);
-}
-
-# See http://rwmj.wordpress.com/2010/04/29/tip-install-a-service-in-a-windows-vm/
-sub _add_service_to_registry
-{
-    my $h = shift;
-    my $current_cs = shift;
-
-    # Make the changes.
-    my $regedits = <<REGEDITS;
-[HKEY_LOCAL_MACHINE\\SYSTEM\\$current_cs\\services\\rhev-apt]
-"Type"=dword:00000010
-"Start"=dword:00000002
-"ErrorControl"=dword:00000001
-"ImagePath"="c:\\\\Temp\\\\V2V\\\\rhsrvany.exe"
-"DisplayName"="RHSrvAny"
-"ObjectName"="LocalSystem"
-
-[HKEY_LOCAL_MACHINE\\SYSTEM\\$current_cs\\services\\rhev-apt\\Parameters]
-"CommandLine"="cmd /c \\"c:\\\\Temp\\\\V2V\\\\firstboot.bat\"\\"
-"PWD"="c:\\\\Temp\\\\V2V"
-REGEDITS
-
-    my $io = IO::String->new ($regedits);
 
     local *_map = sub {
         if ($_[0] =~ /^HKEY_LOCAL_MACHINE\\SYSTEM(.*)/i) {
@@ -423,28 +393,167 @@ sub _prepare_virtio_drivers
     return ($block, $net);
 }
 
-# Upload necessary files from the host to the guest.
-# Returns 1 if RHEV APT is available, 0 otherwise.
-sub _upload_files
+# Configure the guest to run a batch file on first boot
+sub _configure_firstboot
 {
-    my ($g, $root, $windir, $tmpdir, $config) = @_;
+    my ($g, $root, $config, $tmpdir, $h_sys, $current_cs) = @_;
 
-
-    # Copy other files into a temp directory on the guest
-    # N.B. This directory must match up with the configuration of rhsrvany
-    my $path = '';
-    foreach my $d ('Temp', 'V2V') {
-        $path .= '/'.$d;
-
-        $path = $g->case_sensitive_path($path);
-        $g->mkdir_p($path);
+    # Ensure we have rhsrvany
+    my ($rhsrvany_host) = $config->match_app($g, $root, 'rhsrvany',
+                                             $g->inspect_get_arch($root));
+    if (!defined($rhsrvany_host)) {
+        logmsg WARN, __x('Unable to configure firstboot service because '.
+                         'rhsrvany is not defined in the configuration file');
+        return undef;
     }
 
-    foreach my $file (@fb_files) {
-        $g->cp($file, $path);
+    my $rhsrvany_guest = $config->get_transfer_path($rhsrvany_host);
+    unless (defined($rhsrvany_guest) && $g->exists($rhsrvany_guest)) {
+        logmsg WARN, __x('Unable to configure firstboot service because '.
+                         '{path} is required, but missing',
+                         path => $rhsrvany_host);
+        return undef;
     }
 
-    return 1;
+    # Create a temporary local file to hold the firstboot batch file
+    my $firstboot_tmp = File::Spec->catfile($tmpdir, 'firstboot.bat');
+    my $firstboot;
+    unless (open($firstboot, '>', $firstboot_tmp)) {
+        logmsg WARN, __x('Unable to open local file ({path}) for writing: '.
+                         '{error}',
+                         path => $firstboot_tmp, error => $!);
+        return undef;
+    }
+
+    # Initialise the firstboot batch file
+    print $firstboot <<'FIRSTBOOT';
+@echo off
+
+rem firstboot.bat
+rem Copyright (C) 2013 Red Hat Inc.
+rem
+rem This program is free software; you can redistribute it and/or
+rem modify it under the terms of the GNU Lesser General Public
+rem License as published by the Free Software Foundation; either
+rem version 2 of the License, or (at your option) any later version.
+rem
+rem This library is distributed in the hope that it will be useful,
+rem but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+rem Lesser General Public License for more details.
+rem
+rem You should have received a copy of the GNU Lesser General Public
+rem License along with this library; if not, write to the Free Software
+rem Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+
+echo V2V first boot script started > log.txt
+FIRSTBOOT
+
+    # Create a directory for firstboot files in the guest
+    my $firstboot_dir = ''; # global
+    my $firstboot_dir_win = 'C:';
+    foreach my $d ('Program Files', 'RedHat', 'V2V Firstboot') {
+        $firstboot_dir .= '/'.$d;
+        $firstboot_dir_win .= '\\\\'.$d;
+
+        $firstboot_dir = $g->case_sensitive_path($firstboot_dir);
+        $g->mkdir_p($firstboot_dir);
+    }
+
+    # Copy rhsrvany to guest
+    $g->cp($rhsrvany_guest, $firstboot_dir);
+
+    # Add a new rhsrvany service to the system registry to execute firstboot
+    my $rhsrvany_win = $firstboot_dir_win.'\\\\rhsrvany.exe';
+    my $firstboot_win = $firstboot_dir_win.'\\\\firstboot.bat';
+
+    my $regedits = <<REGEDITS;
+[HKEY_LOCAL_MACHINE\\SYSTEM\\$current_cs\\services\\v2v-firstboot]
+"Type"=dword:00000010
+"Start"=dword:00000002
+"ErrorControl"=dword:00000001
+"ImagePath"="$rhsrvany_win -s v2v-firstboot"
+"DisplayName"="V2V first boot actions"
+"ObjectName"="LocalSystem"
+
+[HKEY_LOCAL_MACHINE\\SYSTEM\\$current_cs\\services\\v2v-firstboot\\Parameters]
+"CommandLine"="cmd /c \\"$firstboot_win\\""
+"PWD"="$firstboot_dir_win"
+REGEDITS
+
+    my $io = IO::String->new ($regedits);
+
+    local *_map = sub {
+        if ($_[0] =~ /^HKEY_LOCAL_MACHINE\\SYSTEM(.*)/i) {
+            return ($h_sys, $1);
+        } else {
+            die "can only make updates to the SYSTEM hive (key was: $_[0])\n"
+        }
+    };
+
+    reg_import ($io, \&_map);
+
+    return ($firstboot, $firstboot_tmp, $firstboot_dir);
+}
+
+sub _close_firstboot
+{
+    my ($g, $firstboot, $firstboot_tmp, $firstboot_dir) = @_;
+
+    print $firstboot <<'FIRSTBOOT';
+
+echo uninstalling v2v-firstboot service >>log.txt
+rhsrvany.exe -s v2v-firstboot uninstall >>log.txt
+FIRSTBOOT
+
+    # Write the completed firstboot script into the guest
+    if (defined($firstboot)) {
+        close($firstboot); undef $firstboot;
+        $g->upload($firstboot_tmp, $firstboot_dir.'/firstboot.bat');
+    }
+}
+
+sub _configure_rhev_apt
+{
+    my ($g, $root, $config, $firstboot, $firstboot_dir) = @_;
+
+    # Ensure we have rhev-apt
+    my ($rhevapt_host) = $config->match_app($g, $root, 'rhev-apt',
+                                            $g->inspect_get_arch($root));
+    if (!defined($rhevapt_host)) {
+        logmsg WARN, __x('Unable to configure rhev-apt service because '.
+                         'rhev-apt is not defined in the configuration file');
+        return;
+    }
+
+    my $rhevapt_guest = $config->get_transfer_path($rhevapt_host);
+    unless (defined($rhevapt_guest) && $g->exists($rhevapt_guest)) {
+        logmsg WARN, __x('Unable to configure rhev-apt service because '.
+                         '{path} is required, but missing',
+                         path => $rhevapt_host);
+        return;
+    }
+
+    # We can't install rhev-apt without firstboot
+    # N.B. It may seem more efficient to check this first, but by checking it
+    # here the user gets error messages for all missing files in a single
+    # conversion
+    if (!defined($firstboot)) {
+        logmsg WARN, __x('Unable to configure rhev-apt service without '.
+                         'firstboot');
+        return;
+    }
+
+    $g->cp($rhevapt_guest, $firstboot_dir);
+
+    print $firstboot <<'RHEVAPT';
+
+echo installing rhev-apt >>log.txt
+"rhev-apt.exe" /S /v /qn >>log.txt
+
+echo starting rhev-apt >>log.txt
+net start rhev-apt >>log.txt
+RHEVAPT
 }
 
 sub _disable_services
