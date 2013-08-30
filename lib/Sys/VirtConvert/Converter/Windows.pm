@@ -144,8 +144,8 @@ sub convert
     _disable_processor_drivers($h_sys, $current_cs);
 
     my ($block, $net) =
-        _prepare_virtio_drivers($g, $root, $windir, $config, $h_soft);
-    _add_viostor_to_registry($g, $root, $h_sys, $current_cs) if $block eq 'virtio';
+        _prepare_virtio_drivers($g, $root, $windir, $config,
+                                $h_sys, $h_soft, $current_cs);
 
     # Commit and upload the modified registry hives
     $h_sys->commit(undef); undef $h_sys;
@@ -308,17 +308,19 @@ REGEDITS
 # be searched automatically when automatically installing drivers.
 sub _prepare_virtio_drivers
 {
-    my ($g, $root, $windir, $config, $h) = @_;
+    my ($g, $root, $windir, $config, $h_sys, $h_soft, $current_cs) = @_;
 
     # Copy the target VirtIO drivers to the guest
-    my $driverdir = File::Spec->catdir($g->case_sensitive_path($windir), "Drivers/VirtIO");
+    my $driverdir = File::Spec->catdir($g->case_sensitive_path($windir),
+                                       'Drivers', 'VirtIO');
 
     $g->mkdir_p($driverdir);
 
     # Check for a virtio entry in the config file for this OS
-    my $virtio;
+    my $virtio_host;
     eval {
-        ($virtio) = $config->match_app($g, $root, 'virtio', $g->inspect_get_arch($root));
+        ($virtio_host) = $config->match_app($g, $root, 'virtio',
+                                            $g->inspect_get_arch($root));
     };
     if ($@) {
         my $block = 'ide';
@@ -338,12 +340,24 @@ sub _prepare_virtio_drivers
         return ($block, $net);
     }
 
-    my ($block, $net);
-    # This will not return undef because we already checked it in _upload_files
-    $virtio = $config->get_transfer_path($virtio);
+    # We can't proceed if there are any files missing
+    my $virtio_guest = $config->get_transfer_path($virtio_host);
+    v2vdie __x('Installation failed because the following '.
+               'files referenced in the configuration file are '.
+               'required, but missing: {list}',
+               list => $virtio_host)
+        unless (defined($virtio_host) && $g->exists($virtio_guest));
 
-    if ($g->exists(File::Spec->catfile($virtio, 'viostor.inf'))) {
+    my ($block, $net);
+    my $viostor_guest = File::Spec->catfile($virtio_guest, 'viostor.sys');
+    if ($g->exists($viostor_guest)) {
         $block = 'virtio';
+
+        # Copy viostor directly into place as it's a critical boot device
+        $g->cp($viostor_guest,
+               $g->case_sensitive_path("$windir/system32/drivers"));
+
+        _add_viostor_to_registry($g, $root, $h_sys, $current_cs);
     } else {
         $block = 'ide';
         logmsg WARN, __x('There is no virtio block driver '.
@@ -356,7 +370,7 @@ sub _prepare_virtio_drivers
                          block => $block);
     }
 
-    if ($g->exists(File::Spec->catfile($virtio, 'netkvm.inf'))) {
+    if ($g->exists(File::Spec->catfile($virtio_guest, 'netkvm.inf'))) {
         $net = 'virtio';
     } else {
         $net = 'rtl8139';
@@ -370,25 +384,22 @@ sub _prepare_virtio_drivers
                          'conversion.', net => $net);
     }
 
-    foreach my $src ($g->ls($virtio)) {
-        my $name = $src;
-        $src = File::Spec->catfile($virtio, $src);
-        my $dst = File::Spec->catfile($driverdir, $name);
-        $g->cp($src, $dst);
+    foreach my $file ($g->ls($virtio_guest)) {
+        $g->cp(File::Spec->catfile($virtio_guest, $file), $driverdir);
     }
 
     # Find the node \Microsoft\Windows\CurrentVersion
-    my $node = $h->root();
+    my $node = $h_soft->root();
     foreach ('Microsoft', 'Windows', 'CurrentVersion') {
-        $node = $h->node_get_child($node, $_);
+        $node = $h_soft->node_get_child($node, $_);
     }
 
     # Update DevicePath, but leave everything else as is
     my @new;
     my $append = ';%SystemRoot%\Drivers\VirtIO';
-    foreach my $v ($h->node_values($node)) {
-        my $key = $h->value_key($v);
-        my ($type, $data) = $h->value_value($v);
+    foreach my $v ($h_soft->node_values($node)) {
+        my $key = $h_soft->value_key($v);
+        my ($type, $data) = $h_soft->value_value($v);
 
         # Decode the string from utf16le to perl native
         my $value = decode('UTF-16LE', $data);
@@ -407,7 +418,7 @@ sub _prepare_virtio_drivers
 
         push (@new, { key => $key, t => $type, value => $data });
     }
-    $h->node_set_values($node, \@new);
+    $h_soft->node_set_values($node, \@new);
 
     return ($block, $net);
 }
@@ -418,42 +429,6 @@ sub _upload_files
 {
     my ($g, $root, $windir, $tmpdir, $config) = @_;
 
-    # Check we have virtio
-    my ($v_path) = $config->match_app($g, $root, 'virtio', $g->inspect_get_arch($root));
-    my $v_local = $config->get_transfer_path($v_path);
-
-    # We can't proceed if there are any files missing
-    v2vdie __x('Installation failed because the following '.
-               'files referenced in the configuration file are '.
-               'required, but missing: {list}',
-               list => $v_path)
-        unless (defined($v_local) && $g->exists($v_local));
-
-    # Copy viostor directly into place as it's a critical boot device
-    $g->cp (File::Spec->catfile($v_local, 'viostor.sys'),
-            $g->case_sensitive_path ("$windir/system32/drivers"));
-
-    # Check if we have the files available to install firstboot
-    my @fb_missing;
-    my @fb_files;
-    for my $file ("firstboot", "firstbootapp", "rhsrvany") {
-        my ($path) = $config->match_app($g, $root, $file, $g->inspect_get_arch($root));
-        my $local = $config->get_transfer_path($path);
-
-        if (defined($local) && $g->exists($local)) {
-            push(@fb_files, $local);
-        } else {
-            push (@fb_missing, $path)
-        }
-    }
-
-    if (@fb_missing > 0) {
-        logmsg WARN, __x('The RHEV Application Provisioning Tool cannot be '.
-                         'configured because the following files referenced '.
-                         'in the configuration file are required, but '.
-                         'missing: {list}', list => join(' ', @fb_missing));
-        return 0;
-    }
 
     # Copy other files into a temp directory on the guest
     # N.B. This directory must match up with the configuration of rhsrvany
