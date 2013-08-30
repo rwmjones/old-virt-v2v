@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
 "POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 12:56+0000\n"
+"PO-Revision-Date: 2013-06-13 03:09+0000\n"
 "Last-Translator: Tomoyuki KATO <tomo@dream.daynight.jp>\n"
 "Language-Team: Japanese <trans-ja@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -409,7 +409,7 @@ msgstr "設定の capability が {property} 属性のない dep を含んでい�
 
 #, perl-brace-format
 msgid "No config specified. No {type} match for {search}."
-msgstr "設定が指定されていません。{search} に対して {type} 一致しません。"
+msgstr "設定が指定されていません。{search} に一致する {type} がありません。"
 
 #, perl-brace-format
 msgid "No {type} in config matches {search}"
