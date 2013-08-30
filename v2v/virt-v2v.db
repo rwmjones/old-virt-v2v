@@ -23,25 +23,25 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
     <dep name='kernel' minversion='2.6.9-89.EL'/>
   </capability>
 
-  <!-- RHEL 5+ packages the cirrus driver in xorg-x11-drv-cirrus -->
-  <capability os='linux' distro='rhel' major='6' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <!-- RHEL 5+ packages the qxl driver in xorg-x11-drv-qxl -->
+  <capability os='linux' distro='rhel' major='6' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
 
-  <capability os='linux' distro='rhel' major='5' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <capability os='linux' distro='rhel' major='5' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
 
-  <!-- RHEL 4 bundles the cirrus driver with the main X package -->
-  <capability os='linux' distro='rhel' major='4' name='cirrus'/>
+  <!-- RHEL 4 bundles the qxl driver with the main X package -->
+  <capability os='linux' distro='rhel' major='4' name='qxl'/>
 
   <!-- All current versions of Fedora support VirtIO -->
   <capability os='linux' distro='fedora' name='virtio'/>
 
-  <!-- All current versions of fedora package the cirrus driver in
-       xorg-x11-drv-cirrus -->
-  <capability os='linux' distro='fedora' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <!-- All current versions of fedora package the qxl driver in
+       xorg-x11-drv-qxl -->
+  <capability os='linux' distro='fedora' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
 
   <!-- RHEL clones: copied from above with distro altered -->
@@ -56,13 +56,13 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   <capability os='linux' distro='centos' major='4' name='virtio'>
     <dep name='kernel' minversion='2.6.9-89.EL'/>
   </capability>
-  <capability os='linux' distro='centos' major='6' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <capability os='linux' distro='centos' major='6' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
-  <capability os='linux' distro='centos' major='5' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <capability os='linux' distro='centos' major='5' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
-  <capability os='linux' distro='centos' major='4' name='cirrus'/>
+  <capability os='linux' distro='centos' major='4' name='qxl'/>
 
   <!-- Scientific Linux -->
   <capability os='linux' distro='scientificlinux' major='6' name='virtio'/>
@@ -75,19 +75,13 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   <capability os='linux' distro='scientificlinux' major='4' name='virtio'>
     <dep name='kernel' minversion='2.6.9-89.EL'/>
   </capability>
-  <capability os='linux' distro='scientificlinux' major='6' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <capability os='linux' distro='scientificlinux' major='6' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
-  <capability os='linux' distro='scientificlinux' major='5' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
+  <capability os='linux' distro='scientificlinux' major='5' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
-  <capability os='linux' distro='scientificlinux' major='4' name='cirrus'/>
-
-  <!-- All current versions of fedora package the cirrus driver in
-       xorg-x11-drv-cirrus -->
-  <capability os='linux' distro='fedora' name='cirrus'>
-    <dep name='xorg-x11-drv-cirrus'/>
-  </capability>
+  <capability os='linux' distro='scientificlinux' major='4' name='qxl'/>
 
   <!-- This is a place-holder for the 'user-custom' capability, which allows
        the user to install custom packages during linux conversions. Don't edit

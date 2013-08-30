@@ -349,7 +349,7 @@ sub _meta_to_domxml
     <input type='tablet' bus='usb'/>
     <input type='mouse' bus='ps2'/>
     <video>
-      <model type='cirrus' vram='9216' heads='1'/>
+      <model type='qxl' ram='65536' heads='1'/>
     </video>
     <console type='pty'/>
   </devices>
@@ -378,19 +378,15 @@ DOM
 
     my ($devices) = $root->findnodes('devices');
 
-    my $display_type;
     my $display_keymap;
     my $display_password;
     if (defined($meta->{display})) {
-        $display_type       = $meta->{display}->{type};
         $display_keymap     = $meta->{display}->{keymap};
         $display_password   = $meta->{display}->{password};
-    } else {
-        $display_type = 'vnc';
     }
 
     my $graphics = _append_elem($devices, 'graphics');
-    $graphics->setAttribute('type', $display_type);
+    $graphics->setAttribute('type', 'spice');
     $graphics->setAttribute('keymap', $display_keymap)
         if defined($display_keymap);
     $graphics->setAttribute('passwd', $display_password)

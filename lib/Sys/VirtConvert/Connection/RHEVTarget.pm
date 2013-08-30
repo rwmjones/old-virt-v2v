@@ -656,7 +656,7 @@ sub create_guest
         <IsStateless>False</IsStateless>
         <Origin>0</Origin>
         <VmType>$vmtype</VmType>
-        <DefaultDisplayType>0</DefaultDisplayType>
+        <DefaultDisplayType>1</DefaultDisplayType>
 
         <Section ovf:id="$vmuuid" ovf:required="false" xsi:type="ovf:OperatingSystemSection_Type">
           <Info>Guest Operating System</Info>
@@ -692,6 +692,7 @@ sub create_guest
                 <rasd:InstanceId>5</rasd:InstanceId>
                 <rasd:ResourceType>20</rasd:ResourceType>
                 <rasd:VirtualQuantity>1</rasd:VirtualQuantity>
+                <rasd:Device>qxl</rasd:Device>
             </Item>
         </Section>
     </Content>

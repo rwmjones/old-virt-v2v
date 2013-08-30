@@ -865,7 +865,7 @@ sub _configure_display_driver
         }
 
         foreach my $path ($g->aug_match('/files'.$xorg.'/Device/Driver')) {
-            $g->aug_set($path, 'cirrus');
+            $g->aug_set($path, 'qxl');
             $updated = 1;
         }
 
@@ -884,13 +884,13 @@ sub _configure_display_driver
     augeas_error($g, $@) if ($@);
 
     # If we updated the X driver, check if X itself is actually installed. If it
-    # is, ensure the cirrus driver is installed.
+    # is, ensure the qxl driver is installed.
     if ($updated &&
         ($g->exists('/usr/bin/X') || $g->exists('/usr/bin/X11/X')) &&
-        !_install_capability('cirrus', $g, $root, $config, $meta, $grub))
+        !_install_capability('qxl', $g, $root, $config, $meta, $grub))
     {
-        logmsg WARN, __('Display driver was updated to cirrus, but unable to '.
-                        'install cirrus driver. X may not function correctly');
+        logmsg WARN, __('Display driver was updated to qxl, but unable to '.
+                        'install qxl driver. X may not function correctly');
     }
 }
 

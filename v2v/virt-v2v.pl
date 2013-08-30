@@ -1120,7 +1120,7 @@ Virt-v2v will configure the following drivers in a Linux guest:
 
 =head2 VirtIO
 
- X display      cirrus
+ X display      qxl
  Block          virtio_blk
  Network        virtio_net
 
@@ -1128,7 +1128,7 @@ Additionally, initrd will preload the virtio_pci driver.
 
 =head2 Non-VirtIO
 
- X display      cirrus
+ X display      qxl
  Block          IDE
  Network        e1000
 
@@ -1138,13 +1138,13 @@ Virt-v2v will configure the following drivers in a Windows guest:
 
 =head2 VirtIO
 
- X display      cirrus
+ X display      qxl
  Block          viostor
  Network        netkvm
 
 =head2 Non-VirtIO
 
- X display      cirrus
+ X display      qxl
  Block          IDE
  Network        rtl8139
 
