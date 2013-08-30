@@ -494,9 +494,9 @@ msgid "Don't know how to update {device}, which loads the {module} module."
 msgstr "No se sabe de qué manera actualizar {device}, responsable de la carga del módulo {module}."
 
 msgid ""
-"Display driver was updated to cirrus, but unable to install cirrus driver. X"
+"Display driver was updated to qxl, but unable to install qxl driver. X"
 " may not function correctly"
-msgstr "El controlador del monitor fue actualizado a cirrus, pero no es posible instalarlo. Las X podrían no funcionar correctamente."
+msgstr "El controlador del monitor fue actualizado a qxl, pero no es posible instalarlo. Las X podrían no funcionar correctamente."
 
 #, perl-brace-format
 msgid "Didn't find modules directory {modules} for kernel {path}\n"
