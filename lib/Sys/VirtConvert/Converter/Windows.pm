@@ -21,6 +21,7 @@ use strict;
 use warnings;
 
 use File::Spec;
+use File::Spec::Win32;
 use File::Temp qw(tempdir);
 use Encode qw(encode decode);
 use IO::String;
@@ -142,6 +143,7 @@ sub convert
         _configure_firstboot($g, $root, $config, $tmpdir, $h_sys, $current_cs);
 
     _configure_rhev_apt($g, $root, $config, $firstboot, $firstboot_dir);
+    _unconfigure_xenpv($g, $h_soft, $firstboot);
 
     _close_firstboot($g, $firstboot, $firstboot_tmp, $firstboot_dir);
 
@@ -554,6 +556,49 @@ echo installing rhev-apt >>log.txt
 echo starting rhev-apt >>log.txt
 net start rhev-apt >>log.txt
 RHEVAPT
+}
+
+sub _unconfigure_xenpv
+{
+    my ($g, $h_soft, $firstboot) = @_;
+
+    my @regkey = ('Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
+                  'Red Hat Paravirtualized Xen Drivers for Windows(R)');
+
+    # Find the node \Microsoft\Windows\CurrentVersion\Uninstall
+    #               \Red Hat Paravirtualized Xen Drivers for Windows(R)
+    my $node = $h_soft->root();
+    foreach (@regkey) {
+        $node = $h_soft->node_get_child($node, $_);
+        return unless defined($node);
+    }
+
+    my $uninst;
+    foreach my $v ($h_soft->node_values($node)) {
+        my $key = $h_soft->value_key($v);
+
+        if ($key eq 'UninstallString') {
+            $uninst = $h_soft->value_value($v);
+            $uninst = decode('UTF-16LE', $uninst);
+            last;
+        }
+    }
+
+    logmsg WARN, __x("Can't uninstall Xen PV: {regkey} doesn't contain {value}",
+                     regkey => '\HKLM\SOFTWARE\\'.join(@regkey, '\\'),
+                     value => 'UninstallString');
+
+    # The uninstall program will be uninst.exe. This is a wrapper around
+    # _uninst.exe which prompts the user. As we don't want the user to be
+    # prompted, we run _uninst.ex explicitly.
+    my ($vol, $dir, $file) = File::Spec::Win32->splitpath($uninst);
+    $uninst = File::Spec::Win32->catfile($vol, $dir, '_uninst.exe');
+
+    print $firstboot <<XENPV;
+
+echo Uninstalling Xen PV driver >>log.txt
+"$uninst" >>log.txt
+XENPV
 }
 
 sub _disable_services
