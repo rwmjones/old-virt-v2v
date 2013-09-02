@@ -121,7 +121,7 @@ sub ACTION_syntaxcheck
         $checktabs = 0 if($name =~ /^Makefile(\..*)?$/);
 
         while(<$fh>) {
-            if(/\s\n$/) {
+            if(/[ \t](?:\r|\n)$/) {
                 $self->log_info("$file: trailing whitespace on line $.\n");
                 $error = 1;
             }
