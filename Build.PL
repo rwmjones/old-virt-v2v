@@ -17,7 +17,7 @@ sub ACTION_po
 {
     my $self = shift;
 
-    system($self->config('make'), '-C', 'po', 'pot', 'update-po') == 0
+    $self->do_system($self->config('make'), '-C', 'po', 'pot', 'update-po')
         or return 1;
 
     return 0;
@@ -30,8 +30,8 @@ sub process_locale_files
 
     # Make them first
     $self->log_info("process_locale_files\n");
-    system($self->config('make'), '-C', 'po', 'install',
-           'LOCALEDIR=../blib/locale') == 0
+    $self->do_system($self->config('make'), '-C', 'po', 'install',
+                     'LOCALEDIR=../blib/locale')
         or die(); # We need to die() here because process_foo_files return isn't
                   # checked.
 }
@@ -148,12 +148,12 @@ sub ACTION_changelog
         return 1;
     }
 
-    unless(system("git", "submodule", "init") == 0) {
+    unless($self->do_system("git", "submodule", "init")) {
         $self->log_info("Failed to initialise git2cl submodule: $@\n");
         return 1;
     }
 
-    unless(system("git", "submodule", "update") == 0) {
+    unless($self->do_system("git", "submodule", "update")) {
         $self->log_info("Failed to update git2cl submodule: $@\n");
         return 1;
     }
