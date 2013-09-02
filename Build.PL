@@ -198,6 +198,39 @@ sub ACTION_changelog
     return 0;
 }
 
+# Build rhsrvany
+sub ACTION_rhsrvany_conf
+{
+    my $self = shift;
+
+    # Ensure we've initialised the rhsrvany submodule
+    $self->depends_on('submodules') == 0 or return 1;
+
+    unless ($self->up_to_date('rhsrvany/configure.ac', 'rhsrvany/configure')) {
+        $self->do_system('sh', '-c', 'cd rhsrvany && autoreconf -i')
+            or return 1;
+    }
+
+    return 0;
+}
+
+sub ACTION_rhsrvany
+{
+    my $self = shift;
+
+    $self->depends_on('rhsrvany_conf') == 0 or return 1;
+
+    unless ($self->up_to_date('rhsrvany/configure', 'rhsrvany/Makefile')) {
+        $self->do_system('sh', '-c', 'cd rhsrvany && mingw32-configure')
+            or return 1;
+    }
+
+    $self->do_system($self->config('make'), '-C', 'rhsrvany')
+        or return 1;
+
+    return 0;
+}
+
 # Create all generated files
 sub ACTION_generated
 {
@@ -223,6 +256,9 @@ sub ACTION_generated
     }
     print $ks "VERSION=$version\n";
     close($ks) or return 1;
+
+    # Ensure we've run autoreconf in rhsrvany to remove dep on autotools
+    $self->depends_on('rhsrvany_conf') == 0 or return 1;
 
     return 0;
 }
@@ -287,10 +323,23 @@ my $build = $class->new (
         },
     },
     syntaxcheck_exclude => [ "COPYING", "COPYING.LIB", "README-NLS",
-                             "windows/rhsrvany.exe", "po/*.po" ],
+                             "po/*.po",
+                             "rhsrvany/aclocal.m4",
+                             "rhsrvany/config.guess",
+                             "rhsrvany/config.sub",
+                             "rhsrvany/configure",
+                             "rhsrvany/install-sh",
+                             "rhsrvany/Makefile.in",
+                             "rhsrvany/RHSrvAny/Makefile.in",
+                             "rhsrvany/RHSrvAny/RHSrvAnyInfo.rc",
+                             "rhsrvany/RHSrvAny/RHSrvAny.mc",
+                             "rhsrvany/RHSrvAny/RHSrvAny.vcproj",
+                             "rhsrvany/RHSrvAny.sln",
+                              ],
     PL_files => [ 'virt-v2v.spec.PL', 'rubygem-virt-p2v.spec.PL' ],
 );
 
 $build->add_build_element('confdoc');
 $build->add_build_element('locale');
+$build->add_build_element('rhsrvany');
 $build->create_build_script();

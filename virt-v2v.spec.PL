@@ -71,6 +71,7 @@ BuildRequires:  perl(Module::Pluggable)
 BuildRequires:  perl(Net::HTTPS)
 BuildRequires:  perl(Net::SSL)
 BuildRequires:  perl(Sys::Guestfs)
+BuildRequires:  perl(Sys::Syslog)
 BuildRequires:  perl(Sys::Virt)
 BuildRequires:  perl(Term::ProgressBar)
 BuildRequires:  perl(URI)
@@ -79,6 +80,10 @@ BuildRequires:  perl(XML::DOM::XPath)
 
 BuildRequires:  perl-Sys-Guestfs >= 1:1.14.0
 BuildRequires:  perl-hivex >= 1.2.2
+
+# For building rhsrvany
+BuildRequires:  mingw32-filesystem
+BuildRequires:  mingw32-gcc
 
 Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
@@ -122,6 +127,7 @@ variety of guest operating systems from libvirt-managed hosts and VMware ESX.
 %build
 %{__perl} Build.PL
 ./Build
+./Build rhsrvany
 
 # perl doesn't need debuginfo
 %define debug_package %{nil}
@@ -143,7 +149,7 @@ mkdir -p $statedir/software
 windir=$statedir/software/windows
 mkdir -p $windir
 
-cp windows/rhsrvany.exe $windir/
+cp rhsrvany/RHSrvAny/rhsrvany.exe $windir/
 
 mkdir -p %{buildroot}%{_sysconfdir}
 cp v2v/virt-v2v.conf %{buildroot}%{_sysconfdir}/

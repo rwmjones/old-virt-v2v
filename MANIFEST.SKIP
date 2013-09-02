@@ -38,3 +38,7 @@ p2v/client/tmp
 
 # ISO file created when running image-builder in the build tree
 ^p2v/image-builder/Virt-P2V.iso
+
+# Non-essential build files
+^rhsrvany/autom4te.cache/
+^rhsrvany/.git$
