@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
-"POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 14:38+0000\n"
-"Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
+"POT-Creation-Date: 2013-09-02 16:38+0100\n"
+"PO-Revision-Date: 2013-09-02 15:40+0000\n"
+"Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: Dutch (http://www.transifex.com/projects/p/fedora/language/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -491,9 +491,9 @@ msgid "Don't know how to update {device}, which loads the {module} module."
 msgstr "Weet niet hoe {device} vernieuwd kan worden, welke de {module} module inlaadt."
 
 msgid ""
-"Display driver was updated to qxl, but unable to install qxl driver. X"
-" may not function correctly"
-msgstr "Display driver werd vernieuwd naar qxl, maar kan qxl driver niet installeren. X werkt misschien niet correct"
+"Display driver was updated to qxl, but unable to install qxl driver. X may "
+"not function correctly"
+msgstr ""
 
 #, perl-brace-format
 msgid "Didn't find modules directory {modules} for kernel {path}\n"
@@ -615,12 +615,37 @@ msgid ""
 "conversion."
 msgstr "Er is geen virtio netwerkdriver beschikbaar in de map gespecificeerd voor deze Windows versie. De gast zal geconfigureerd worden met een {net} netwerk adapter, maar er wordt geen driver voor geïnstalleerd. Als de {net} driver nog niet op de gast geïnstalleerd is, moet je deze na de conversie handmatig installeren."
 
+msgid ""
+"Unable to configure firstboot service because rhsrvany is not defined in the"
+" configuration file"
+msgstr ""
+
 #, perl-brace-format
 msgid ""
-"The RHEV Application Provisioning Tool cannot be configured because the "
-"following files referenced in the configuration file are required, but "
-"missing: {list}"
-msgstr "Het RHEV Application Provisioning Tool kan niet geconfigureerd worden omdat naar de volgende bestanden in het configuratie bestand gerefereerd wordt, maar deze ontbreken: {list}"
+"Unable to configure firstboot service because {path} is required, but "
+"missing"
+msgstr ""
+
+#, perl-brace-format
+msgid "Unable to open local file ({path}) for writing: {error}"
+msgstr ""
+
+msgid ""
+"Unable to configure rhev-apt service because rhev-apt is not defined in the "
+"configuration file"
+msgstr ""
+
+#, perl-brace-format
+msgid ""
+"Unable to configure rhev-apt service because {path} is required, but missing"
+msgstr ""
+
+msgid "Unable to configure rhev-apt service without firstboot"
+msgstr ""
+
+#, perl-brace-format
+msgid "Can't uninstall Xen PV: {regkey} doesn't contain {value}"
+msgstr ""
 
 msgid ""
 "Failed to launch guestfs appliance. Try running again with "

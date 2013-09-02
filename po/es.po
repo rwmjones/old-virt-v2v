@@ -3,17 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Daniel Cabrera <logan@fedoraproject.org>, 2011
 # Eduardo Villagrán M <gotencool@gmail.com>, 2012
 # vareli <ehespinosa@ya.com>, 2013
 # Daniel Cabrera <logan@fedoraproject.org>, 2011
 # Hugo Jiménez Hernández <hjimenezhdez@gmail.com>, 2011
+# KOJI3 <JOSE.LINARES.1993@gmail.com>, 2013
 # mdbooth <mbooth@redhat.com>, 2011
+# vareli <ehespinosa@ya.com>, 2013
 msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
-"POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 10:23+0000\n"
+"POT-Creation-Date: 2013-09-02 16:38+0100\n"
+"PO-Revision-Date: 2013-09-02 15:40+0000\n"
 "Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: Spanish <trans-es@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -478,7 +481,7 @@ msgid "Didn't find grub entry for kernel {kernel}"
 msgstr "No encuentro entrada grub para kernel {kernel}"
 
 msgid "Failed to install non-EFI grub2"
-msgstr ""
+msgstr "Error al instalar grub2 non-EFI"
 
 msgid "No grub configuration found"
 msgstr "No encontrada configuración grub"
@@ -494,9 +497,9 @@ msgid "Don't know how to update {device}, which loads the {module} module."
 msgstr "No se sabe de qué manera actualizar {device}, responsable de la carga del módulo {module}."
 
 msgid ""
-"Display driver was updated to qxl, but unable to install qxl driver. X"
-" may not function correctly"
-msgstr "El controlador del monitor fue actualizado a qxl, pero no es posible instalarlo. Las X podrían no funcionar correctamente."
+"Display driver was updated to qxl, but unable to install qxl driver. X may "
+"not function correctly"
+msgstr ""
 
 #, perl-brace-format
 msgid "Didn't find modules directory {modules} for kernel {path}\n"
@@ -618,12 +621,37 @@ msgid ""
 "conversion."
 msgstr "No existe disponible un controlador de red virtio en el directorio especificado para esta versión de Windows. El huésped será configurado con un adaptador de red {net}, pero no será instalado ningún controlador para él. Si el controlador {net} no se halla instalado en el huésped en estos momentos, deberá instalarlo manualmente luego de la conversión."
 
+msgid ""
+"Unable to configure firstboot service because rhsrvany is not defined in the"
+" configuration file"
+msgstr ""
+
 #, perl-brace-format
 msgid ""
-"The RHEV Application Provisioning Tool cannot be configured because the "
-"following files referenced in the configuration file are required, but "
-"missing: {list}"
-msgstr "La Herramienta de Aprovisionamiento de Aplicación RHEV no puede ser configurada porque los siguientes ficheros referenciados en el fichero de configuración se requieren, pero están desaparecidos: {list}"
+"Unable to configure firstboot service because {path} is required, but "
+"missing"
+msgstr ""
+
+#, perl-brace-format
+msgid "Unable to open local file ({path}) for writing: {error}"
+msgstr ""
+
+msgid ""
+"Unable to configure rhev-apt service because rhev-apt is not defined in the "
+"configuration file"
+msgstr ""
+
+#, perl-brace-format
+msgid ""
+"Unable to configure rhev-apt service because {path} is required, but missing"
+msgstr ""
+
+msgid "Unable to configure rhev-apt service without firstboot"
+msgstr ""
+
+#, perl-brace-format
+msgid "Can't uninstall Xen PV: {regkey} doesn't contain {value}"
+msgstr ""
 
 msgid ""
 "Failed to launch guestfs appliance. Try running again with "

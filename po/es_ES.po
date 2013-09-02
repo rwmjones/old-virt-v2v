@@ -4,12 +4,13 @@
 # 
 # Translators:
 # alex_pe <aeperezt@fedoraproject.org>, 2011
+# alex_pe <aeperezt@fedoraproject.org>, 2011
 msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
-"POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 10:24+0000\n"
+"POT-Creation-Date: 2013-09-02 16:38+0100\n"
+"PO-Revision-Date: 2013-09-02 15:40+0000\n"
 "Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/projects/p/fedora/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
@@ -490,8 +491,8 @@ msgid "Don't know how to update {device}, which loads the {module} module."
 msgstr "No se como actualizar {device}, que carga el modulo {module} "
 
 msgid ""
-"Display driver was updated to qxl, but unable to install qxl driver. X"
-" may not function correctly"
+"Display driver was updated to qxl, but unable to install qxl driver. X may "
+"not function correctly"
 msgstr ""
 
 #, perl-brace-format
@@ -614,11 +615,36 @@ msgid ""
 "conversion."
 msgstr "No existe un dispositivo de red virtio disponible en la ruta especificada para esta versión de Windows. El huésped se configurara con un dispositivo de red {net}. pero ningún controlador sera instalado para el. Si el controlador del  dispositivo {net}  no se encuentra ya instalado en el huésped, usted tendrá que instalar el mismo manualmente. "
 
+msgid ""
+"Unable to configure firstboot service because rhsrvany is not defined in the"
+" configuration file"
+msgstr ""
+
 #, perl-brace-format
 msgid ""
-"The RHEV Application Provisioning Tool cannot be configured because the "
-"following files referenced in the configuration file are required, but "
-"missing: {list}"
+"Unable to configure firstboot service because {path} is required, but "
+"missing"
+msgstr ""
+
+#, perl-brace-format
+msgid "Unable to open local file ({path}) for writing: {error}"
+msgstr ""
+
+msgid ""
+"Unable to configure rhev-apt service because rhev-apt is not defined in the "
+"configuration file"
+msgstr ""
+
+#, perl-brace-format
+msgid ""
+"Unable to configure rhev-apt service because {path} is required, but missing"
+msgstr ""
+
+msgid "Unable to configure rhev-apt service without firstboot"
+msgstr ""
+
+#, perl-brace-format
+msgid "Can't uninstall Xen PV: {regkey} doesn't contain {value}"
 msgstr ""
 
 msgid ""

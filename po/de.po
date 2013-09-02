@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: virt-v2v\n"
 "Report-Msgid-Bugs-To: http://bugzilla.redhat.com/\n"
-"POT-Creation-Date: 2013-06-12 11:12+0100\n"
-"PO-Revision-Date: 2013-06-12 10:23+0000\n"
+"POT-Creation-Date: 2013-09-02 16:38+0100\n"
+"PO-Revision-Date: 2013-09-02 15:40+0000\n"
 "Last-Translator: mdbooth <mbooth@redhat.com>\n"
 "Language-Team: German <trans-de@lists.fedoraproject.org>\n"
 "MIME-Version: 1.0\n"
@@ -490,8 +490,8 @@ msgid "Don't know how to update {device}, which loads the {module} module."
 msgstr ""
 
 msgid ""
-"Display driver was updated to qxl, but unable to install qxl driver. X"
-" may not function correctly"
+"Display driver was updated to qxl, but unable to install qxl driver. X may "
+"not function correctly"
 msgstr ""
 
 #, perl-brace-format
@@ -614,11 +614,36 @@ msgid ""
 "conversion."
 msgstr ""
 
+msgid ""
+"Unable to configure firstboot service because rhsrvany is not defined in the"
+" configuration file"
+msgstr ""
+
 #, perl-brace-format
 msgid ""
-"The RHEV Application Provisioning Tool cannot be configured because the "
-"following files referenced in the configuration file are required, but "
-"missing: {list}"
+"Unable to configure firstboot service because {path} is required, but "
+"missing"
+msgstr ""
+
+#, perl-brace-format
+msgid "Unable to open local file ({path}) for writing: {error}"
+msgstr ""
+
+msgid ""
+"Unable to configure rhev-apt service because rhev-apt is not defined in the "
+"configuration file"
+msgstr ""
+
+#, perl-brace-format
+msgid ""
+"Unable to configure rhev-apt service because {path} is required, but missing"
+msgstr ""
+
+msgid "Unable to configure rhev-apt service without firstboot"
+msgstr ""
+
+#, perl-brace-format
+msgid "Can't uninstall Xen PV: {regkey} doesn't contain {value}"
 msgstr ""
 
 msgid ""
