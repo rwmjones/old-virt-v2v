@@ -78,7 +78,8 @@ BuildRequires:  perl(XML::DOM)
 BuildRequires:  perl(XML::DOM::XPath)
 
 BuildRequires:  perl-Sys-Guestfs >= 1:1.14.0
-BuildRequires:  perl-hivex >= 1.2.2
+BuildRequires:  perl(Win::Hivex) >= 1.2.2
+BuildRequires:  perl(Win::Hivex::Regedit) >= 1.2.2
 
 # For building rhsrvany
 BuildRequires:  mingw32-filesystem
@@ -90,7 +91,7 @@ Requires:  perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 Requires:       perl-Sys-Guestfs >= 1:1.14.0
 
 # Undocumented from antiquity
-Requires:       perl-hivex >= 1.2.2
+Requires:       perl(Win::Hivex) >= 1.2.2
 
 # Required for passing flags to get_xml_description
 Requires:       perl(Sys::Virt) >= 0.2.4
