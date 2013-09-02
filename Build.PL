@@ -19,6 +19,8 @@ sub ACTION_po
 
     system($self->config('make'), '-C', 'po', 'pot', 'update-po') == 0
         or return 1;
+
+    return 0;
 }
 
 # Generate locale files and install them to blib/locale
