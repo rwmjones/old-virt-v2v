@@ -136,25 +136,37 @@ sub ACTION_syntaxcheck
     return $error;
 }
 
+# Initialise git submodules
+sub ACTION_submodules
+{
+    my $self = shift;
+
+    # Nothing to do if this isn't a git repo
+    -d '.git' or return 0;
+
+    unless($self->do_system("git", "submodule", "init")) {
+        $self->log_info("Failed to initialise submodules: $@\n");
+        return 1;
+    }
+
+    unless($self->do_system("git", "submodule", "update")) {
+        $self->log_info("Failed to update submodules: $@\n");
+        return 1;
+    }
+}
+
 # Add changelog target
 sub ACTION_changelog
 {
     my $self = shift;
 
+    # Ensure we've initialised the gitcl submodule
+    $self->depends_on('submodules') == 0 or return 1;
+
     # Check that this is a git repository
     unless(-d '.git') {
         $self->log_info('ChangeLog can only be generated from a git '.
                          "repository\n");
-        return 1;
-    }
-
-    unless($self->do_system("git", "submodule", "init")) {
-        $self->log_info("Failed to initialise git2cl submodule: $@\n");
-        return 1;
-    }
-
-    unless($self->do_system("git", "submodule", "update")) {
-        $self->log_info("Failed to update git2cl submodule: $@\n");
         return 1;
     }
 
