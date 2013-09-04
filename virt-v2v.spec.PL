@@ -149,7 +149,9 @@ mkdir -p $statedir/software
 windir=$statedir/software/windows
 mkdir -p $windir
 
+# Copy built rhsrvany.exe into place. There's no need for it to be executable
 cp rhsrvany/RHSrvAny/rhsrvany.exe $windir/
+chmod 0644 $windir/rhsrvany.exe
 
 mkdir -p %{buildroot}%{_sysconfdir}
 cp v2v/virt-v2v.conf %{buildroot}%{_sysconfdir}/
