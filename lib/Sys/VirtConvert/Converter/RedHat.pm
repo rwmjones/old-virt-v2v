@@ -2354,23 +2354,6 @@ sub _remap_block_devices
     }
 }
 
-sub _drivecmp
-{
-    my ($prefix, $a, $b) = @_;
-
-    map {
-        $_ =~ /^$prefix([a-z]+)/ or die("drive $_ doesn't have prefix $prefix");
-        $_ = $1;
-    } ($a, $b);
-
-    return -1 if (length($a) < length($b));
-    return 1 if (length($a) > length($b));
-
-    return -1 if ($a lt $b);
-    return 0 if ($a eq $b);
-    return 1;
-}
-
 sub _prepare_bootable
 {
     my ($g, $root, $grub, $version, @modules) = @_;
