@@ -247,7 +247,8 @@ sub check
     my $grub_path = $1;
 
     # Nothing to do if the kernel already has a grub entry
-    return if $g->aug_match("/files$grub_conf/title/kernel[. = '$grub_path']") > 0;
+    my @entries = $g->aug_match("/files$grub_conf/title/kernel[. = '$grub_path']");
+    return if scalar(@entries) > 0;
 
     my $kernel =
         Sys::VirtConvert::Converter::RedHat::_inspect_linux_kernel($g, $path);
