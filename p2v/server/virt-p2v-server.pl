@@ -405,7 +405,7 @@ sub convert
         my $err = $@;
         $g->close() if defined($g);
 
-        die($@);
+        die($err);
     }
 
     p2v_return_ok();
