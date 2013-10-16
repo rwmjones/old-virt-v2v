@@ -658,6 +658,8 @@ if($guestcaps->{block} eq 'virtio' && $guestcaps->{net} eq 'virtio') {
                        name => $output_name);
 }
 
+logmsg NOTICE, __x('Conversion completed successfully.');
+
 exit(0);
 
 # die() sets $? to 255, which is untidy.
