@@ -171,11 +171,25 @@ sub copy_storage
                              name => $src->get_name());
             $dst = $target->get_volume($src->get_name());
         } else {
+            my $disk_format = defined($output_format) ? $output_format :
+                                                        $src->get_format();
+            my $disk_sparse = defined($output_sparse) ? $output_sparse :
+                                                        $src->is_sparse();
+
+            # Conversion will fail if libguestfs can't write to the output
+            # format. Currently the only well-supported output formats are raw
+            # and qcow2.
+            if ($disk_format ne 'raw' && $disk_format ne 'qcow2') {
+                v2vdie __x('Target guest disk format would be {format}, but '.
+                           'we only support creation of raw and qcow2. To '.
+                           'convert this guest, you must explicitly specify '.
+                           'an output format of either raw or qcow2.',
+                           format => $disk_format);
+            }
+
             $dst = $target->create_volume(
-                $src->get_name(),
-                defined($output_format) ?  $output_format : $src->get_format(),
-                $src->get_size(),
-                defined($output_sparse) ? $output_sparse : $src->is_sparse()
+                $src->get_name(), $disk_format,
+                $src->get_size(), $disk_sparse,
             );
 
             # Conversion will fail if libguestfs isn't able to use the copied
