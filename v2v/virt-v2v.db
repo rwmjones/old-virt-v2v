@@ -9,8 +9,9 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
 
 <virt-v2v>
   <!-- Capabilities -->
-  <!-- RHEL 6 has always supported virtio -->
+  <!-- RHEL 6+ has always supported virtio -->
   <capability os='linux' distro='rhel' major='6' name='virtio'/>
+  <capability os='linux' distro='rhel' major='7' name='virtio'/>
 
   <capability os='linux' distro='rhel' major='5' name='virtio'>
     <dep name='kernel' minversion='2.6.18-128.el5'/>
@@ -24,6 +25,10 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   </capability>
 
   <!-- RHEL 5+ packages the qxl driver in xorg-x11-drv-qxl -->
+  <capability os='linux' distro='rhel' major='7' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
+  </capability>
+
   <capability os='linux' distro='rhel' major='6' name='qxl'>
     <dep name='xorg-x11-drv-qxl'/>
   </capability>
@@ -46,6 +51,7 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
 
   <!-- RHEL clones: copied from above with distro altered -->
   <!-- CentOS -->
+  <capability os='linux' distro='centos' major='7' name='virtio'/>
   <capability os='linux' distro='centos' major='6' name='virtio'/>
   <capability os='linux' distro='centos' major='5' name='virtio'>
     <dep name='kernel' minversion='2.6.18-128.el5'/>
@@ -56,6 +62,9 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   <capability os='linux' distro='centos' major='4' name='virtio'>
     <dep name='kernel' minversion='2.6.9-89.EL'/>
   </capability>
+  <capability os='linux' distro='centos' major='7' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
+  </capability>
   <capability os='linux' distro='centos' major='6' name='qxl'>
     <dep name='xorg-x11-drv-qxl'/>
   </capability>
@@ -65,6 +74,7 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   <capability os='linux' distro='centos' major='4' name='qxl'/>
 
   <!-- Scientific Linux -->
+  <capability os='linux' distro='scientificlinux' major='7' name='virtio'/>
   <capability os='linux' distro='scientificlinux' major='6' name='virtio'/>
   <capability os='linux' distro='scientificlinux' major='5' name='virtio'>
     <dep name='kernel' minversion='2.6.18-128.el5'/>
@@ -74,6 +84,9 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   </capability>
   <capability os='linux' distro='scientificlinux' major='4' name='virtio'>
     <dep name='kernel' minversion='2.6.9-89.EL'/>
+  </capability>
+  <capability os='linux' distro='scientificlinux' major='7' name='qxl'>
+    <dep name='xorg-x11-drv-qxl'/>
   </capability>
   <capability os='linux' distro='scientificlinux' major='6' name='qxl'>
     <dep name='xorg-x11-drv-qxl'/>
