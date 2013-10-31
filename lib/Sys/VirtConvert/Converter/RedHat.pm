@@ -80,7 +80,7 @@ sub check_efi
 # Methods for inspecting and manipulating grub legacy
 package Sys::VirtConvert::Converter::RedHat::GrubLegacy;
 
-use Sys::VirtConvert::Util;
+use Sys::VirtConvert::Util qw(:DEFAULT augeas_error);
 
 use File::Basename;
 use Locale::TextDomain 'virt-v2v';
