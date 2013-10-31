@@ -34,10 +34,13 @@ sub get_initrd
 
     my $g = $self->{g};
 
-    foreach my $line (eval { $g->command_lines(['grubby', '--info', $path]) }) {
-        if ($line =~ /^initrd=(\S+)/) {
-            my $initrd = $1;
-            return $initrd if $g->is_file_opts($initrd, followsymlinks=>1);
+    if ($g->exists('/sbin/grubby')) {
+        foreach my $line (eval { $g->command_lines(['grubby',
+                                                    '--info', $path]) }) {
+            if ($line =~ /^initrd=(\S+)/) {
+                my $initrd = $1;
+                return $initrd if $g->is_file_opts($initrd, followsymlinks=>1);
+            }
         }
     }
 
@@ -55,6 +58,33 @@ sub get_initrd
     }
 
     v2vdie __x('Didn\'t find initrd for kernel {path}', path => $path);
+}
+
+sub get_default_image
+{
+    my $self = shift;
+    my $default;
+
+    my $g = $self->{g};
+
+    if ($g->exists('/sbin/grubby')) {
+        $default = $g->command(['grubby', '--default-kernel']);
+    }
+
+    chomp($default);
+    return $default;
+}
+
+sub set_default_image
+{
+    my $self = shift;
+    my ($path) = @_;
+
+    my $g = $self->{g};
+
+    if ($g->exists('/sbin/grubby')) {
+        $g->command(['grubby', '--set-default', $path]);
+    }
 }
 
 sub check_efi
@@ -335,7 +365,7 @@ sub check
 sub write
 {
     my $self = shift;
-    my ($path) = @_;
+    my ($path, $root) = @_;
 
     my $g = $self->{g};
     my $grub_conf = $self->{grub_conf};
@@ -430,8 +460,7 @@ sub list_kernels
     my @kernels;
 
     # Start by adding the default kernel
-    my $default = $g->command(['grubby', '--default-kernel']);
-    chomp($default);
+    my $default = $self->get_default_image();
     push(@kernels, $default) if length($default) > 0;
 
     # This is how the grub2 config generator enumerates kernels
@@ -453,8 +482,15 @@ sub update_console
 
     my $g = $self->{g};
 
+    my $grub_cmdline;
+    if ($g->exists('/etc/sysconfig/grub')) {
+        $grub_cmdline = '/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX';
+    } else {
+        $grub_cmdline = '/files/etc/default/grub/GRUB_CMDLINE_LINUX_DEFAULT';
+    }
+
     my $cmdline =
-        eval { $g->aug_get('/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX') };
+        eval { $g->aug_get($grub_cmdline) };
 
     if (defined($cmdline) && $cmdline =~ /\bconsole=(?:x|h)vc0\b/) {
         if ($remove) {
@@ -464,7 +500,7 @@ sub update_console
         }
 
         eval {
-            $g->aug_set('/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX', $cmdline);
+            $g->aug_set($grub_cmdline, $cmdline);
             $g->aug_save();
         };
         augeas_error($g, $@) if ($@);
@@ -486,11 +522,14 @@ sub write
 
     my $g = $self->{g};
 
-    my $default = $g->command(['grubby', '--default-kernel']);
-    chomp($default);
+    my $default = $self->get_default_image();
 
     if ($default ne $path) {
-        $g->command(['grubby', '--set-default', $path]);
+        eval { $self->set_default_image($path) };
+        if ($@) {
+            logmsg WARN, __x('Unable to set default kernel to {path}',
+                             path => $path);
+        }
     }
 }
 
@@ -648,7 +687,8 @@ sub convert
     my $remove_serial_console = exists($options->{NO_SERIAL_CONSOLE});
     _configure_console($g, $grub, $remove_serial_console);
 
-    _configure_display_driver($g, $root, $config, $meta, $grub);
+    my $display = _get_display_driver($g, $root);
+    _configure_display_driver($g, $root, $config, $meta, $grub, $display);
     _remap_block_devices($meta, $virtio, $g, $root, $grub);
     _configure_kernel_modules($g, $virtio);
     _configure_boot($kernel, $virtio, $g, $root, $grub);
@@ -659,6 +699,7 @@ sub convert
     $guestcaps{net}   = $virtio == 1 ? 'virtio' : 'e1000';
     $guestcaps{arch}  = _get_os_arch($g, $root, $grub);
     $guestcaps{acpi}  = _supports_acpi($g, $root, $guestcaps{arch});
+    $guestcaps{display} = $display;
 
     return \%guestcaps;
 }
@@ -865,7 +906,7 @@ sub _configure_console
 
 sub _configure_display_driver
 {
-    my ($g, $root, $config, $meta, $grub) = @_;
+    my ($g, $root, $config, $meta, $grub, $display) = @_;
 
     # Update the display driver if it exists
     my $updated = 0;
@@ -889,7 +930,7 @@ sub _configure_display_driver
         }
 
         foreach my $path ($g->aug_match('/files'.$xorg.'/Device/Driver')) {
-            $g->aug_set($path, 'qxl');
+            $g->aug_set($path, $display);
             $updated = 1;
         }
 
@@ -908,14 +949,15 @@ sub _configure_display_driver
     augeas_error($g, $@) if ($@);
 
     # If we updated the X driver, check if X itself is actually installed. If it
-    # is, ensure the qxl driver is installed.
+    # is, ensure the specified driver is installed.
     if ($updated &&
         ($g->is_file_opts('/usr/bin/X', followsymlinks=>1) ||
          $g->is_file_opts('/usr/bin/X11/X', followsymlinks=>1)) &&
-        !_install_capability('qxl', $g, $root, $config, $meta, $grub))
+        !_install_capability($display, $g, $root, $config, $meta, $grub))
     {
-        logmsg WARN, __('Display driver was updated to qxl, but unable to '.
-                        'install qxl driver. X may not function correctly');
+        logmsg WARN, __x('Display driver was updated to {display}, but unable '.
+                         'to install {display} driver. X may not function '.
+                         'correctly', display => $display);
     }
 }
 
@@ -1037,7 +1079,7 @@ sub _configure_kernel
 
         # If the guest is using a Xen PV kernel, choose an appropriate
         # normal kernel replacement
-        if ($kernel_pkg eq "kernel-xen" || $kernel_pkg eq "kernel-xenU") {
+        if ($kernel_pkg =~ /^kernel-xen/) {
             $kernel_pkg = _get_replacement_kernel_name($g, $root,
                                                        $kernel_arch, $meta);
 
@@ -1147,8 +1189,8 @@ sub _get_os_arch
     # Default to x86_64 if we still didn't find an architecture
     return 'x86_64' unless defined($arch);
 
-    # We want an i686 guest for i[345]86
-    return 'i686' if($arch =~ /^i[345]86$/);
+    # Determine the correct 32bit arch
+    $arch = _set_32bit_arch($g, $root, $arch);
 
     return $arch;
 }
@@ -1532,7 +1574,7 @@ sub _install_capability
 
                 # If the guest is using a Xen PV kernel, choose an appropriate
                 # normal kernel replacement
-                if ($kernel_pkg eq "kernel-xen" || $kernel_pkg eq "kernel-xenU")
+                if ($kernel_pkg =~ /^kernel-xen/)
                 {
                     $kernel_pkg =
                         _get_replacement_kernel_name($g, $root, $kernel_arch,
@@ -2007,9 +2049,8 @@ sub _discover_kernel
     # directly detected
     $kernel_arch = $g->inspect_get_arch($root) unless defined($kernel_arch);
 
-    # We haven't supported anything other than i686 for the kernel on 32 bit for
-    # a very long time.
-    $kernel_arch = 'i686' if ('i386' eq $kernel_arch);
+    # Determine the correct 32bit kernel_arch
+    $kernel_arch = _set_32bit_arch($g, $root, $kernel_arch);
 
     return ($kernel_pkg, $kernel_arch, $kernel_ver);
 }
@@ -2338,6 +2379,7 @@ sub _remap_block_devices
         }
         elsif (defined($grub->{cfg})) {
             push (@checklist, '/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX');
+            push (@checklist, '/files/etc/default/grub/GRUB_CMDLINE_LINUX');
         }
 
         # Search through all checklist entries and add matches to a matchlist
@@ -2382,7 +2424,8 @@ sub _remap_block_devices
             if (!exists($map{$name})) {
                 my $warned = 0;
                 for my $file ('/etc/fstab', '/boot/grub/device.map',
-                              '/boot/grub/menu.lst', '/etc/sysconfig/grub') {
+                              '/boot/grub/menu.lst', '/etc/sysconfig/grub',
+                              '/etc/default/grub') {
                     if ($spec =~ m{^/files$file}) {
                         logmsg WARN, __x('{file} references unknown device '.
                                          '{device}. This entry must be '.
@@ -2541,6 +2584,28 @@ sub _supports_virtio
     }
 
     return 1;
+}
+
+# Distributions may use different display drivers.
+sub _get_display_driver
+{
+    my ($g, $root) = @_;
+
+    # RedHat uses qxl, which should be the default driver.
+    return 'qxl';
+}
+
+# Distributions may use either i586 or i686 for 32bit architectures
+sub _set_32bit_arch
+{
+    my ($g, $root, $arch) = @_;
+
+    if ($arch =~ /^i[345]86$/) {
+        # RedHat uses i686, which should be the default 32bit arch
+        $arch = 'i686';
+    }
+
+    return $arch;
 }
 
 =back
