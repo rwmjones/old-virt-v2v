@@ -336,6 +336,16 @@ sub _meta_to_domxml
 {
     my ($meta, $config, $guestcaps) = @_;
 
+    my $video_model;
+    my $display_type;
+    if ($guestcaps->{display} eq 'cirrus') {
+      $video_model = "model type='cirrus' vram='9216' heads='1'";
+      $display_type = "vnc";
+    } else {
+      $video_model = "model type='qxl' ram='65536' heads='1'";
+      $display_type = "spice";
+    }
+
     my $dom = new XML::DOM::Parser->parse(<<DOM);
 <domain type='kvm'>
   <os>
@@ -349,7 +359,7 @@ sub _meta_to_domxml
     <input type='tablet' bus='usb'/>
     <input type='mouse' bus='ps2'/>
     <video>
-      <model type='qxl' ram='65536' heads='1'/>
+      <$video_model/>
     </video>
     <console type='pty'/>
   </devices>
@@ -386,7 +396,7 @@ DOM
     }
 
     my $graphics = _append_elem($devices, 'graphics');
-    $graphics->setAttribute('type', 'spice');
+    $graphics->setAttribute('type', $display_type);
     $graphics->setAttribute('autoport', 'yes');
     $graphics->setAttribute('keymap', $display_keymap)
         if defined($display_keymap);
