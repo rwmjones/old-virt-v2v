@@ -216,6 +216,7 @@ keep /lib/firmware/acenic
 keep /lib/firmware/adaptec
 keep /lib/firmware/advansys
 keep /lib/firmware/bnx2
+keep /lib/firmware/bnx2x
 keep /lib/firmware/cxgb3
 keep /lib/firmware/e100
 keep /lib/firmware/myricom
