@@ -13,7 +13,7 @@
 ../lib/Sys/VirtConvert/Transfer/SSH.pm
 ../lib/Sys/VirtConvert/Transfer/ESX.pm
 ../lib/Sys/VirtConvert/Config.pm
-../lib/Sys/VirtConvert/Converter/RedHat.pm
+../lib/Sys/VirtConvert/Converter/Linux.pm
 ../lib/Sys/VirtConvert/Converter/Windows.pm
 ../lib/Sys/VirtConvert/GuestfsHandle.pm
 ../p2v/server/virt-p2v-server.pl

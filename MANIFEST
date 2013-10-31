@@ -16,7 +16,7 @@ lib/Sys/VirtConvert/Connection/Source.pm
 lib/Sys/VirtConvert/Connection/VMwareOVASource.pm
 lib/Sys/VirtConvert/Connection/Volume.pm
 lib/Sys/VirtConvert/Converter.pm
-lib/Sys/VirtConvert/Converter/RedHat.pm
+lib/Sys/VirtConvert/Converter/Linux.pm
 lib/Sys/VirtConvert/Converter/Windows.pm
 lib/Sys/VirtConvert/ExecHelper.pm
 lib/Sys/VirtConvert/GuestfsHandle.pm

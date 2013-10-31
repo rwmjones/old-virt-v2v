@@ -1,4 +1,4 @@
-# Sys::VirtConvert::Converter::RedHat
+# Sys::VirtConvert::Converter::Linux
 # Copyright (C) 2009-2012 Red Hat Inc.
 # Copyright (C) 2013 SUSE Inc.
 #
@@ -22,7 +22,7 @@ use warnings;
 
 # Functions supported by grubby, and therefore common between gruby legacy and
 # grub2
-package Sys::VirtConvert::Converter::RedHat::Grub;
+package Sys::VirtConvert::Converter::Linux::Grub;
 
 use Sys::VirtConvert::Util;
 use Locale::TextDomain 'virt-v2v';
@@ -78,15 +78,15 @@ sub check_efi
 
 
 # Methods for inspecting and manipulating grub legacy
-package Sys::VirtConvert::Converter::RedHat::GrubLegacy;
+package Sys::VirtConvert::Converter::Linux::GrubLegacy;
 
 use Sys::VirtConvert::Util qw(:DEFAULT augeas_error);
 
 use File::Basename;
 use Locale::TextDomain 'virt-v2v';
 
-@Sys::VirtConvert::Converter::RedHat::GrubLegacy::ISA =
-    qw(Sys::VirtConvert::Converter::RedHat::Grub);
+@Sys::VirtConvert::Converter::Linux::GrubLegacy::ISA =
+    qw(Sys::VirtConvert::Converter::Linux::Grub);
 
 sub new
 {
@@ -268,7 +268,7 @@ sub check
     return if scalar(@entries) > 0;
 
     my $kernel =
-        Sys::VirtConvert::Converter::RedHat::_inspect_linux_kernel($g, $path);
+        Sys::VirtConvert::Converter::Linux::_inspect_linux_kernel($g, $path);
     my $version = $kernel->{version};
     my $grub_initrd = $self->get_initrd($path);
 
@@ -388,13 +388,13 @@ sub convert_efi
 # attempt to use grub2's configuration because it's utterly insane. Instead,
 # we reverse engineer the way the config is automatically generated and use
 # that instead.
-package Sys::VirtConvert::Converter::RedHat::Grub2;
+package Sys::VirtConvert::Converter::Linux::Grub2;
 
 use Sys::VirtConvert::Util qw(:DEFAULT augeas_error);
 use Locale::TextDomain 'virt-v2v';
 
-@Sys::VirtConvert::Converter::RedHat::Grub2::ISA =
-    qw(Sys::VirtConvert::Converter::RedHat::Grub);
+@Sys::VirtConvert::Converter::Linux::Grub2::ISA =
+    qw(Sys::VirtConvert::Converter::Linux::Grub);
 
 sub new
 {
@@ -509,7 +509,7 @@ sub convert_efi
 
     # EFI systems boot using grub2-efi, and probably don't have the base grub2
     # package installed.
-    Sys::VirtConvert::Convert::RedHat::_install_any
+    Sys::VirtConvert::Convert::Linux::_install_any
         (undef, ['grub2'], undef, $g, $self->{root}, $self->{config}, $self)
         or v2vdie __x('Failed to install non-EFI grub2');
 
@@ -532,7 +532,7 @@ sub convert_efi
 }
 
 
-package Sys::VirtConvert::Converter::RedHat;
+package Sys::VirtConvert::Converter::Linux;
 
 use Sys::VirtConvert::Util qw(:DEFAULT augeas_error scsi_first_cmp);
 use Locale::TextDomain 'virt-v2v';
@@ -541,7 +541,7 @@ use Locale::TextDomain 'virt-v2v';
 
 =head1 NAME
 
-Sys::VirtConvert::Converter::RedHat - Convert a Red Hat based guest to run on KVM
+Sys::VirtConvert::Converter::Linux - Convert a Linux based guest to run on KVM
 
 =head1 SYNOPSIS
 
@@ -551,7 +551,7 @@ Sys::VirtConvert::Converter::RedHat - Convert a Red Hat based guest to run on KV
 
 =head1 DESCRIPTION
 
-Sys::VirtConvert::Converter::RedHat converts a Red Hat based guest to use KVM.
+Sys::VirtConvert::Converter::Linux converts a Linux based guest to use KVM.
 
 =head1 METHODS
 
@@ -567,9 +567,9 @@ sub _is_rhel_family
            ($g->inspect_get_distro($root) =~ /^(rhel|centos|scientificlinux|redhat-based)$/);
 }
 
-=item Sys::VirtConvert::Converter::RedHat->can_handle(g, root)
+=item Sys::VirtConvert::Converter::Linux->can_handle(g, root)
 
-Return 1 if Sys::VirtConvert::Converter::RedHat can convert the given guest
+Return 1 if Sys::VirtConvert::Converter::Linux can convert the given guest
 
 =cut
 
@@ -583,9 +583,9 @@ sub can_handle
             (_is_rhel_family($g, $root) || $g->inspect_get_distro($root) eq 'fedora'));
 }
 
-=item Sys::VirtConvert::Converter::RedHat->convert(g, root, config, meta, options)
+=item Sys::VirtConvert::Converter::Linux->convert(g, root, config, meta, options)
 
-Convert a Red Hat based guest. Assume that can_handle has previously returned 1.
+Convert a Linux based guest. Assume that can_handle has previously returned 1.
 
 =over
 
@@ -624,8 +624,8 @@ sub convert
     _init_augeas($g);
 
     my $grub;
-    $grub = eval { Sys::VirtConvert::Converter::RedHat::Grub2->new($g, $root, $config) };
-    $grub = eval { Sys::VirtConvert::Converter::RedHat::GrubLegacy->new($g, $root) }
+    $grub = eval { Sys::VirtConvert::Converter::Linux::Grub2->new($g, $root, $config) };
+    $grub = eval { Sys::VirtConvert::Converter::Linux::GrubLegacy->new($g, $root) }
         unless defined($grub);
     v2vdie __('No grub configuration found') unless defined($grub);
 
