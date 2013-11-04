@@ -1055,7 +1055,7 @@ sub _configure_kernel
                     unless defined($boot_kernel);
             } else {
                 v2vdie __x('Failed to find a {name} package to install',
-                           name => "kernel_pkg.$kernel_arch");
+                           name => "$kernel_pkg.$kernel_arch");
             }
         }
     }
