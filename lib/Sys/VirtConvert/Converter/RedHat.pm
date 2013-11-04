@@ -37,6 +37,19 @@ sub get_initrd
         return $1 if $line =~ /^initrd=(\S+)/;
     }
 
+    # If all else fails, use heuristics
+    if ($path =~ /vmlinuz/) {
+        for my $sub ('initrd', 'initramfs') {
+            my $initrd;
+
+            ($initrd = $path) =~ s/vmlinuz/$sub/;
+            return $initrd if ($g->exists($initrd));
+
+            $initrd .= '.img';
+            return $initrd if ($g->exists($initrd));
+        }
+    }
+
     v2vdie __x('Didn\'t find initrd for kernel {path}', path => $path);
 }
 
