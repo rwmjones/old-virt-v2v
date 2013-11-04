@@ -1529,7 +1529,7 @@ sub _install_capability
                         _get_replacement_kernel_name($g, $root, $kernel_arch,
                                                      $meta);
 
-                    # Check if we've got already got an appropriate kernel
+                    # Check if we've already got an appropriate kernel
                     my ($inst) =
                         _get_installed("$kernel_pkg.$kernel_arch", $g);
 
@@ -2093,7 +2093,7 @@ sub _get_installed
             or die("Unexpected return from rpm command: $installed");
         my ($epoch, $version, $release) = ($1, $2, $3);
 
-        # Ensure iepoch is always numeric
+        # Ensure epoch is always numeric
         $epoch = 0 if('(none)' eq $epoch);
 
         push(@installed, [$epoch, $version, $release]);
