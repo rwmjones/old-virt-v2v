@@ -1,5 +1,6 @@
 # Sys::VirtConvert::Converter::RedHat
 # Copyright (C) 2009-2012 Red Hat Inc.
+# Copyright (C) 2013 SUSE Inc.
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -249,7 +250,7 @@ sub update_console
 sub check
 {
     my $self = shift;
-    my ($path) = @_;
+    my ($path, $root) = @_;
 
     my $g = $self->{g};
     my $grub_conf = $self->{grub_conf};
@@ -268,11 +269,14 @@ sub check
     my $version = $kernel->{version};
     my $grub_initrd = dirname($path)."/initrd-$version";
 
-    # No point in dying if /etc/redhat-release can't be read
-    my ($title) = eval { $g->read_lines('/etc/redhat-release') };
+    # No point in dying if /etc/(distro)-release can't be read
+    my ($title) = eval { $g->inspect_get_product_name($root) };
     $title ||= 'Linux';
 
-    # This is how new-kernel-pkg does it
+    # Remove codename or architecture
+    $title =~ s/ \(.*\)//;
+
+    # Remove release string and add version (like new-kernel-pkg)
     $title =~ s/ release.*//;
     $title .= " ($version)";
 
@@ -1670,7 +1674,7 @@ sub _install_any
     if (defined($kernel)) {
         foreach my $k ($g->glob_expand('/boot/vmlinuz-*')) {
             if (!grep(/^$k$/, @k_before)) {
-                $grub->check($k);
+                $grub->check($k, $root);
                 last;
             }
         }
