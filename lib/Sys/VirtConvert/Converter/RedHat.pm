@@ -47,10 +47,10 @@ sub get_initrd
             my $initrd;
 
             ($initrd = $path) =~ s/vmlinuz/$sub/;
-            return $initrd if ($g->exists($initrd));
+            return $initrd if ($g->is_file_opts($initrd, followsymlinks=>1));
 
             $initrd .= '.img';
-            return $initrd if ($g->exists($initrd));
+            return $initrd if ($g->is_file_opts($initrd, followsymlinks=>1));
         }
     }
 
@@ -107,7 +107,7 @@ sub new
     # Look for the grub configuration file
     foreach my $path ('/boot/grub/menu.lst', '/boot/grub/grub.conf')
     {
-        if ($g->exists($path)) {
+        if ($g->is_file_opts($path, followsymlinks=>1)) {
             $self->{grub_conf} = $path;
             last;
         }
@@ -200,7 +200,7 @@ sub list_kernels
         $kernel = "$grub_fs$kernel" if defined $grub_fs;
 
         # Check the kernel exists
-        if ($g->exists($kernel)) {
+        if ($g->is_file_opts($kernel, followsymlinks=>1)) {
             push(@kernels, $kernel);
         }
 
@@ -411,7 +411,7 @@ sub new
     }
 
     # Check we have a grub2 configuration
-    if ($g->exists('/boot/grub2/grub.cfg')) {
+    if ($g->is_file_opts('/boot/grub2/grub.cfg', followsymlinks=>1)) {
         $self->{cfg} = '/boot/grub2/grub.cfg';
     }
     die unless exists $self->{cfg};
@@ -665,7 +665,7 @@ sub _init_selinux
     my ($g) = @_;
 
     # Assume SELinux isn't in use if load_policy isn't available
-    return if(!$g->exists('/usr/sbin/load_policy'));
+    return if(!$g->is_file_opts('/usr/sbin/load_policy', followsymlinks=>1));
 
     # Actually loading the policy has proven to be problematic. We make whatever
     # changes are necessary, and make the guest relabel on the next boot.
@@ -713,18 +713,18 @@ sub _discover_modpath
     # discovered method will be chosen
 
     foreach my $file ('/etc/conf.modules', '/etc/modules.conf') {
-        if($g->exists($file)) {
+        if($g->is_file_opts($file, followsymlinks=>1)) {
             $modpath = $file;
         }
     }
 
-    if($g->exists("/etc/modprobe.conf")) {
+    if($g->is_file_opts("/etc/modprobe.conf", followsymlinks=>1)) {
         $modpath = "modprobe.conf";
     }
 
     # If the modprobe.d directory exists, create new entries in
     # modprobe.d/virtv2v-added.conf
-    if($g->exists("/etc/modprobe.d")) {
+    if($g->is_dir_opts("/etc/modprobe.d", followsymlinks=>1)) {
         $modpath = "modprobe.d/virtv2v-added.conf";
     }
 
@@ -871,8 +871,8 @@ sub _configure_display_driver
 
         # Check which X configuration we have, and make augeas load it if
         # necessary
-        if (! $g->exists('/etc/X11/xorg.conf') &&
-            $g->exists('/etc/X11/XF86Config'))
+        if (! $g->is_file_opts('/etc/X11/xorg.conf', followsymlinks=>1) &&
+            $g->is_file_opts('/etc/X11/XF86Config', followsymlinks=>1))
         {
             $g->aug_set('/augeas/load/Xorg/incl[last()+1]',
                         '/etc/X11/XF86Config');
@@ -907,7 +907,8 @@ sub _configure_display_driver
     # If we updated the X driver, check if X itself is actually installed. If it
     # is, ensure the qxl driver is installed.
     if ($updated &&
-        ($g->exists('/usr/bin/X') || $g->exists('/usr/bin/X11/X')) &&
+        ($g->is_file_opts('/usr/bin/X', followsymlinks=>1) ||
+         $g->is_file_opts('/usr/bin/X11/X', followsymlinks=>1)) &&
         !_install_capability('qxl', $g, $root, $config, $meta, $grub))
     {
         logmsg WARN, __('Display driver was updated to qxl, but unable to '.
@@ -1090,7 +1091,9 @@ sub _configure_kernel
     my ($kernel_pkg) =
         eval { $g->command_lines(['rpm', '-qf', "/lib/modules/$boot_kernel",
                                          '--qf', '%{NAME}\n']) };
-    if (defined($kernel_pkg) && $g->exists('/etc/sysconfig/kernel')) {
+    if (defined($kernel_pkg) &&
+        $g->is_file_opts('/etc/sysconfig/kernel', followsymlinks=>1))
+    {
         eval {
             foreach my $path ($g->aug_match('/files/etc/sysconfig/kernel'.
                                             '/DEFAULTKERNEL/value'))
@@ -1276,14 +1279,14 @@ sub _unconfigure_vbox
     # this uninstallation script naively overwrites configuration files with
     # versions it cached prior to installation.
     my $vboxconfig = '/var/lib/VBoxGuestAdditions/config';
-    if ($g->exists($vboxconfig)) {
+    if ($g->is_file_opts($vboxconfig, followsymlinks=>1)) {
         my $vboxuninstall;
         foreach (split /\n/, $g->cat($vboxconfig)) {
             if ($_ =~ /^INSTALL_DIR=(.*$)/) {
                 $vboxuninstall = $1 . '/uninstall.sh';
             }
         }
-        if ($g->exists($vboxuninstall)) {
+        if ($g->is_file_opts($vboxuninstall, followsymlinks=>1)) {
             eval { $g->command([$vboxuninstall]) };
             logmsg WARN, __x('VirtualBox Guest Additions were detected, but '.
                              'uninstallation failed. The error message was: '.
@@ -1338,7 +1341,7 @@ sub _unconfigure_vmware
     if (@libraries > 0) {
         # We only support removal of these libraries packages on systems which
         # use yum.
-        if ($g->exists('/usr/bin/yum')) {
+        if ($g->is_file_opts('/usr/bin/yum', followsymlinks=>1)) {
             _net_run($g, sub {
                 foreach my $library (@libraries) {
                     eval {
@@ -1387,7 +1390,7 @@ sub _unconfigure_vmware
     # this uninstallation script naively overwrites configuration files with
     # versions it cached prior to installation.
     my $vmwaretools = '/usr/bin/vmware-uninstall-tools.pl';
-    if ($g->exists($vmwaretools)) {
+    if ($g->is_file_opts($vmwaretools, followsymlinks=>1)) {
         eval { $g->command([$vmwaretools]) };
         logmsg WARN, __x('VMware Tools was detected, but uninstallation '.
                          'failed. The error message was: {error}',
@@ -1629,7 +1632,7 @@ sub _install_capability
 sub _net_run {
     my ($g, $sub) = @_;
 
-    my $resolv_bak = $g->exists('/etc/resolv.conf');
+    my $resolv_bak = $g->is_file_opts('/etc/resolv.conf', followsymlinks=>1);
     $g->mv('/etc/resolv.conf', '/etc/resolv.conf.v2vtmp') if ($resolv_bak);
 
     # XXX We should get the nameserver from the appliance here, but
@@ -1691,10 +1694,11 @@ sub _install_up2date
     my ($kernel, $install, $upgrade, $g) = @_;
 
     # Check this system has actions.packages
-    return 0 unless ($g->exists('/usr/bin/up2date'));
+    return 0 unless ($g->is_file_opts('/usr/bin/up2date', followsymlinks=>1));
 
     # Check this system is registered to rhn
-    return 0 unless ($g->exists('/etc/sysconfig/rhn/systemid'));
+    return 0 unless ($g->is_file_opts('/etc/sysconfig/rhn/systemid',
+                                      followsymlinks=>1));
 
     my @pkgs;
     foreach my $pkg ($kernel, @$install, @$upgrade) {
@@ -1732,7 +1736,7 @@ sub _install_yum
     my ($kernel, $install, $upgrade, $g) = @_;
 
     # Check this system has yum installed
-    return 0 unless ($g->exists('/usr/bin/yum'));
+    return 0 unless ($g->is_file_opts('/usr/bin/yum', followsymlinks=>1));
 
     # Install or upgrade the kernel?
     # If it isn't installed (because we're replacing a PV kernel), we need to
@@ -1821,7 +1825,9 @@ sub _install_config
     my @missing;
     if (defined($kernel)) {
         my $transfer_path = $config->get_transfer_path($kernel);
-        if (!defined($transfer_path) || !$g->exists($transfer_path)) {
+        if (!defined($transfer_path) ||
+            !$g->is_file_opts($transfer_path, followsymlinks=>1))
+        {
             push(@missing, $kernel);
         }
     }
@@ -1876,7 +1882,8 @@ sub _get_deppaths
         my ($path, $deps) = $config->match_app($g, $root, $app, $arch);
 
         my $transfer_path = $config->get_transfer_path($path);
-        my $exists = defined($transfer_path) && $g->exists($transfer_path);
+        my $exists = defined($transfer_path) &&
+                     $g->is_file_opts($transfer_path, followsymlinks=>1);
 
         if (!$exists) {
             push(@$missing, $path);
@@ -1905,7 +1912,9 @@ sub _get_deppaths
 
             if (defined($path)) {
                 $transfer_path = $config->get_transfer_path($path);
-                if (!defined($transfer_path) || !$g->exists($transfer_path)) {
+                if (!defined($transfer_path) ||
+                    !$g->is_file_opts($transfer_path, followsymlinks=>1))
+                {
                     push(@$missing, $path);
 
                     foreach my $deppath (_get_deppaths($g, $root, $config,
@@ -2415,7 +2424,7 @@ sub _remap_block_devices
 
     # Delete cached (and now out of date) blkid info if it exists
     foreach my $blkidtab ('/etc/blkid/blkid.tab', '/etc/blkid.tab') {
-        $g->rm($blkidtab) if ($g->exists($blkidtab));
+        $g->rm($blkidtab) if $g->is_file_opts($blkidtab, followsymlinks=>1);
     }
 }
 
@@ -2428,14 +2437,15 @@ sub _prepare_bootable
     my $grub_initrd = $grub->get_initrd($path);
 
     # Backup the original initrd
-    $g->mv($grub_initrd, "$grub_initrd.pre-v2v") if $g->exists($grub_initrd);
+    $g->mv($grub_initrd, "$grub_initrd.pre-v2v")
+        if $g->is_file_opts($grub_initrd, followsymlinks=>1);
 
-    if ($g->exists('/sbin/dracut')) {
+    if ($g->is_file_opts('/sbin/dracut', followsymlinks=>1)) {
         $g->command(['/sbin/dracut', '--add-drivers', join(" ", @modules),
                      $grub_initrd, $version]);
     }
 
-    elsif ($g->exists('/sbin/mkinitrd')) {
+    elsif ($g->is_file_opts('/sbin/mkinitrd', followsymlinks=>1)) {
         # Create a new initrd which probes the required kernel modules
         my @module_args = ();
         foreach my $module (@modules) {
@@ -2482,7 +2492,7 @@ sub _prepare_bootable
     #   require manual intervention, or
     #   disable the network interface
     # Neither of these behaviours is desirable.
-    if ($g->exists('/etc/init.d/kudzu')) {
+    if ($g->is_file_opts('/etc/init.d/kudzu', followsymlinks=>1)) {
         $g->command(['/sbin/chkconfig', 'kudzu', 'off']);
     }
 }
