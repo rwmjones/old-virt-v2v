@@ -643,7 +643,7 @@ sub convert
     _configure_console($g, $grub, $remove_serial_console);
 
     _configure_display_driver($g, $root, $config, $meta, $grub);
-    _remap_block_devices($meta, $virtio, $g, $root);
+    _remap_block_devices($meta, $virtio, $g, $root, $grub);
     _configure_kernel_modules($g, $virtio);
     _configure_boot($kernel, $virtio, $g, $root, $grub);
 
@@ -2220,7 +2220,7 @@ sub _rpmvercmp
 
 sub _remap_block_devices
 {
-    my ($meta, $virtio, $g, $root) = @_;
+    my ($meta, $virtio, $g, $root, $grub) = @_;
 
     my @devices = map { $_->{device} } @{$meta->{disks}};
     @devices = sort { scsi_first_cmp($a, $b) } @devices;
@@ -2307,12 +2307,43 @@ sub _remap_block_devices
     }
 
     eval {
-        # Update bare device references in fstab and grub's device.map
-        foreach my $spec ($g->aug_match('/files/etc/fstab/*/spec'),
-                          $g->aug_match('/files/boot/grub/device.map/*'.
-                                            '[label() != "#comment"]'))
+        my @checklist;
+        my @matchlist;
+        my $grub2_remap;
+
+        # Add standard configuration files to the checklist
+        push (@checklist, '/files/etc/fstab/*/spec');
+
+        # Add grub or grub2 files to the checklist
+        if (defined($grub->{grub_conf})) {
+            push (@checklist, "/files$grub->{grub_conf}/*/kernel/root");
+            push (@checklist, "/files$grub->{grub_conf}/*/kernel/resume");
+            push (@checklist, '/files/boot/grub/device.map/*'.
+                              '[label() != "#comment"]');
+        }
+        elsif (defined($grub->{cfg})) {
+            push (@checklist, '/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX');
+        }
+
+        # Search through all checklist entries and add matches to a matchlist
+        foreach my $entry (@checklist) {
+            push (@matchlist, $g->aug_match($entry));
+        }
+
+        # Update device references for every entry in the matchlist
+        foreach my $spec (@matchlist)
         {
             my $device = $g->aug_get($spec);
+
+            # If this is a grub2 environment, isolate 'resume=' value
+            my $grub2_start;
+            my $grub2_end;
+            if (($spec =~ /.*GRUB_CMDLINE.*/) &&
+                    ($device =~ /(.*resume=)(\S+)(\s.*)/)) {
+                $grub2_start = $1;
+                $device = $2;
+                $grub2_end = $3;
+            }
 
             # Match device names and partition numbers
             my $name; my $part;
@@ -2335,7 +2366,8 @@ sub _remap_block_devices
             # about. The user will have to fix this post-conversion.
             if (!exists($map{$name})) {
                 my $warned = 0;
-                for my $file ('/etc/fstab', '/boot/grub/device.map') {
+                for my $file ('/etc/fstab', '/boot/grub/device.map',
+                              '/boot/grub/menu.lst', '/etc/sysconfig/grub') {
                     if ($spec =~ m{^/files$file}) {
                         logmsg WARN, __x('{file} references unknown device '.
                                          '{device}. This entry must be '.
@@ -2358,10 +2390,22 @@ sub _remap_block_devices
 
             my $mapped = '/dev/'.$map{$name};
             $mapped .= $part if defined($part);
+
+            # If this is a grub2 entry, rebuild the entire entry
+            if ($spec =~ /.*GRUB_CMDLINE.*/) {
+                $mapped = $grub2_start.$mapped.$grub2_end;
+                $grub2_remap = 1;
+            }
+
             $g->aug_set($spec, $mapped);
         }
 
         $g->aug_save();
+
+        # Re-generate the grub2 config if grub2 files were changed
+        if (defined($grub2_remap)) {
+            $g->command(['grub2-mkconfig', '-o', $grub->{cfg}]);
+        }
     };
 
     augeas_error($g, $@) if ($@);
