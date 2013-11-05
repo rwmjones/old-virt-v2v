@@ -2425,8 +2425,7 @@ sub _prepare_bootable
     my $grub_initrd = $grub->get_initrd($path);
 
     # Backup the original initrd
-    $g->mv($grub_initrd, "$grub_initrd.pre-v2v")
-    if $g->exists($grub_initrd);
+    $g->mv($grub_initrd, "$grub_initrd.pre-v2v") if $g->exists($grub_initrd);
 
     if ($g->exists('/sbin/dracut')) {
         $g->command(['/sbin/dracut', '--add-drivers', join(" ", @modules),
