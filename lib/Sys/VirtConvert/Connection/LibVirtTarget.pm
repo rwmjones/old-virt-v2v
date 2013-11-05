@@ -387,6 +387,7 @@ DOM
 
     my $graphics = _append_elem($devices, 'graphics');
     $graphics->setAttribute('type', 'spice');
+    $graphics->setAttribute('autoport', 'yes');
     $graphics->setAttribute('keymap', $display_keymap)
         if defined($display_keymap);
     $graphics->setAttribute('passwd', $display_password)
