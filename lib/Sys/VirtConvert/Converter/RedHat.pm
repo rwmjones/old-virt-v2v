@@ -270,7 +270,10 @@ sub check
     my $kernel =
         Sys::VirtConvert::Converter::RedHat::_inspect_linux_kernel($g, $path);
     my $version = $kernel->{version};
-    my $grub_initrd = dirname($path)."/initrd-$version";
+    my $grub_initrd = $self->get_initrd($path);
+
+    # paths in grub are relative to grub_fs
+    $grub_initrd =~ s/^$grub_fs//;
 
     # No point in dying if /etc/(distro)-release can't be read
     my ($title) = eval { $g->inspect_get_product_name($root) };
