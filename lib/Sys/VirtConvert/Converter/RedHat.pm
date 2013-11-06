@@ -34,7 +34,7 @@ sub get_initrd
 
     my $g = $self->{g};
 
-    foreach my $line ($g->command_lines(['grubby', '--info', $path])) {
+    foreach my $line (eval { $g->command_lines(['grubby', '--info', $path]) }) {
         if ($line =~ /^initrd=(\S+)/) {
             my $initrd = $1;
             return $initrd if $g->is_file_opts($initrd, followsymlinks=>1);
