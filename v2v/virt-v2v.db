@@ -49,6 +49,36 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
     <dep name='xorg-x11-drv-qxl'/>
   </capability>
 
+  <!-- SLES 11 supports virtio in the default kernel-->
+  <capability os='linux' distro='sles' major='11' name='virtio'>
+    <dep name='kernel'/>
+  </capability>
+  <capability os='linux' distro='sles' major='10' name='virtio'>
+    <dep name='kernel' minversion='2.6.16.60-0.85.1'/>
+  </capability>
+  <!-- SLES packages the cirrus driver in xorg-x11-driver-video -->
+  <capability os='linux' distro='sles' name='cirrus'>
+    <dep name='xorg-x11-driver-video'/>
+  </capability>
+
+  <!-- openSUSE 11/12/13 supports virtio in the default kernel -->
+  <capability os='linux' distro='opensuse' major='13' name='virtio'>
+    <dep name='kernel'/>
+  </capability>
+  <capability os='linux' distro='opensuse' major='12' name='virtio'>
+    <dep name='kernel'/>
+  </capability>
+  <capability os='linux' distro='opensuse' major='11' name='virtio'>
+    <dep name='kernel'/>
+  </capability>
+  <capability os='linux' distro='opensuse' major='10' name='virtio'>
+    <dep name='kernel' minversion='2.6.25.5-1.1'/>
+  </capability>
+  <!-- openSUSE packages the cirrus driver in xorg-x11-driver-video -->
+  <capability os='linux' distro='opensuse' name='cirrus'>
+    <dep name='xorg-x11-driver-video'/>
+  </capability>
+
   <!-- RHEL clones: copied from above with distro altered -->
   <!-- CentOS -->
   <capability os='linux' distro='centos' major='7' name='virtio'/>
@@ -189,6 +219,49 @@ the modifications or additions to /etc/virt-v2v.conf instead. Configuration in
   </app>
   <app os='linux' distro='rhel' major='4' arch='x86_64' name='kernel-largesmp'>
     <path>rhel/4/kernel-largesmp-2.6.9-89.EL.x86_64.rpm</path>
+  </app>
+
+  <!-- SLES 11
+       All of these RPMs are from SLES11 SP3.
+       SLES 11 requires both a kernel-[flavor] and a kernel-[flavor]-base -->
+  <app os='linux' distro='sles' major='11' arch='x86_64' name='kernel-default'>
+    <path>sles/11/kernel-default-3.0.76-0.11.1.x86_64.rpm</path>
+    <dep>kernel-default-base</dep>
+  </app>
+  <app os='linux' distro='sles' major='11' arch='x86_64' name='kernel-default-base'>
+    <path>sles/11/kernel-default-base-3.0.76-0.11.1.x86_64.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='11' arch='i586' name='kernel-default'>
+    <path>sles/11/kernel-default-3.0.76-0.11.1.i586.rpm</path>
+    <dep>kernel-default-base</dep>
+  </app>
+  <app os='linux' distro='sles' major='11' arch='i586' name='kernel-default-base'>
+    <path>sles/11/kernel-default-base-3.0.76-0.11.1.i586.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='11' arch='i586' name='kernel-pae'>
+    <path>sles/11/kernel-pae-3.0.76-0.11.1.i586.rpm</path>
+    <dep>kernel-pae-base</dep>
+  </app>
+  <app os='linux' distro='sles' major='11' arch='i586' name='kernel-pae-base'>
+    <path>sles/11/kernel-pae-base-3.0.76-0.11.1.i586.rpm</path>
+  </app>
+
+  <!-- SLES 10
+       All of these RPMs are from SLES10 SP4. -->
+  <app os='linux' distro='sles' major='10' arch='x86_64' name='kernel-default'>
+    <path>sles/10/kernel-default-2.6.16.60-0.85.1.x86_64.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='10' arch='x86_64' name='kernel-smp'>
+    <path>sles/10/kernel-smp-2.6.16.60-0.85.1.x86_64.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='10' arch='i586' name='kernel-default'>
+    <path>sles/10/kernel-default-2.6.16.60-0.85.1.i586.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='10' arch='i586' name='kernel-bigsmp'>
+    <path>sles/10/kernel-bigsmp-2.6.16.60-0.85.1.i586.rpm</path>
+  </app>
+  <app os='linux' distro='sles' major='10' arch='i586' name='kernel-smp'>
+    <path>sles/10/kernel-smp-2.6.16.60-0.85.1.i586.rpm</path>
   </app>
 
   <!-- Windows -->
