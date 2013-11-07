@@ -20,8 +20,8 @@ use strict;
 use warnings;
 
 
-# Functions supported by grubby, and therefore common between gruby legacy and
-# grub2
+# Functions supported by grubby or perl-Bootloader, and therefore common
+# between grub legacy and grub2
 package Sys::VirtConvert::Converter::Linux::Grub;
 
 use Sys::VirtConvert::Util;
@@ -41,6 +41,22 @@ sub get_initrd
                 my $initrd = $1;
                 return $initrd if $g->is_file_opts($initrd, followsymlinks=>1);
             }
+        }
+    } else {
+        # If grubby did not work, try perl-Bootloader (for SUSE environments)
+        my $initrd = eval { $g->command(['/usr/bin/perl',
+           '-MBootloader::Tools',
+           '-e', 'InitLibrary(); '.
+           'my @sections = '.
+           'GetSectionList(type=>image, image=>"'.$path.'"); '.
+           'my $section = GetSection(@sections); '.
+           'my $initrd = $section->{initrd}; '.
+           'print $initrd;']) };
+
+        if (defined($initrd)) {
+            # If the initrd starts with (hdX,X), remove it.
+            $initrd =~ s/^\(hd.*\)//;
+            return $initrd if ($g->is_file_opts($initrd, followsymlinks=>1));
         }
     }
 
@@ -69,6 +85,14 @@ sub get_default_image
 
     if ($g->exists('/sbin/grubby')) {
         $default = $g->command(['grubby', '--default-kernel']);
+    } else {
+        $default = eval { $g->command(['/usr/bin/perl',
+                  '-MBootloader::Tools',
+                  '-e', 'InitLibrary(); '.
+                  'my $default=Bootloader::Tools::GetDefaultSection(); '.
+                  'print $default->{image};']) };
+        # If the image starts with (hdX,X), remove it.
+        $default =~ s/^\(hd.*\)//;
     }
 
     chomp($default);
@@ -84,7 +108,18 @@ sub set_default_image
 
     if ($g->exists('/sbin/grubby')) {
         $g->command(['grubby', '--set-default', $path]);
-    }
+    } else {
+        # Using the image path to set a default image is not always reliable.
+        # To be safe, get the image name, then set that as the default image.
+        eval { $g->command(['/usr/bin/perl',
+           '-MBootloader::Tools',
+           '-e', 'InitLibrary(); '.
+           'my @sections = '.
+           'GetSectionList(type=>image, image=>"'.$path.'"); '.
+           'my $section = GetSection(@sections); '.
+           'my $newdefault = $section->{name}; '.
+           'SetGlobals(default, "$newdefault");']) };
+   }
 }
 
 sub check_efi
@@ -226,6 +261,9 @@ sub list_kernels
         my $kernel = eval { $g->aug_get($path) };
         augeas_error($g, $@) if ($@);
 
+        # Make sure $kernel does not begin with (hdX,X).
+        $kernel =~ s/^\(hd.*\)//;
+
         # Prepend the grub filesystem to the kernel path
         $kernel = "$grub_fs$kernel" if defined $grub_fs;
 
@@ -365,7 +403,7 @@ sub check
 sub write
 {
     my $self = shift;
-    my ($path, $root) = @_;
+    my ($path) = @_;
 
     my $g = $self->{g};
     my $grub_conf = $self->{grub_conf};
