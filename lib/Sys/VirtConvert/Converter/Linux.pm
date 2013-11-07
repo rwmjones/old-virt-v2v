@@ -336,7 +336,7 @@ sub check
     return if scalar(@entries) > 0;
 
     my $kernel =
-        Sys::VirtConvert::Converter::Linux::_inspect_linux_kernel($g, $path);
+        Sys::VirtConvert::Converter::Linux::_inspect_linux_kernel($g, $root, $path);
     my $version = $kernel->{version};
     my $grub_initrd = $self->get_initrd($path);
 
@@ -644,6 +644,14 @@ sub _is_rhel_family
            ($g->inspect_get_distro($root) =~ /^(rhel|centos|scientificlinux|redhat-based)$/);
 }
 
+sub _is_suse_family
+{
+    my ($g, $root) = @_;
+
+    return ($g->inspect_get_type($root) eq 'linux') &&
+           ($g->inspect_get_distro($root) =~ /^(sles|suse-based|opensuse)$/);
+}
+
 =item Sys::VirtConvert::Converter::Linux->can_handle(g, root)
 
 Return 1 if Sys::VirtConvert::Converter::Linux can convert the given guest
@@ -656,8 +664,11 @@ sub can_handle
 
     my ($g, $root) = @_;
 
-    return ($g->inspect_get_type($root) eq 'linux' &&
-            (_is_rhel_family($g, $root) || $g->inspect_get_distro($root) eq 'fedora'));
+    if ($g->inspect_get_type($root) eq 'linux') {
+        return (_is_rhel_family($g, $root) ||
+               ($g->inspect_get_distro($root) eq 'fedora') ||
+                _is_suse_family($g, $root));
+    }
 }
 
 =item Sys::VirtConvert::Converter::Linux->convert(g, root, config, meta, options)
@@ -1020,7 +1031,7 @@ sub _clean_rpmdb
 #   arch => architecture of the kernel
 sub _inspect_linux_kernel
 {
-    my ($g, $path) = @_;
+    my ($g, $root, $path) = @_;
 
     my %kernel = ();
 
@@ -1029,20 +1040,50 @@ sub _inspect_linux_kernel
     # If this is a packaged kernel, try to work out the name of the package
     # which installed it. This lets us know what to install to replace it with,
     # e.g. kernel, kernel-smp, kernel-hugemem, kernel-PAE
-    my $package = eval { $g->command(['rpm', '-qf', '--qf',
-                                      '%{NAME}', $path]) };
-    $kernel{package} = $package if defined($package);;
+    #
+    # Due to the inclusion of a build number in SUSE packages, the version
+    # found through file and the kernel filename does not always match the
+    # version required for installation later. Get the full version-release
+    # here and track it through $kernel{fullversion}.
+    my $package;
+    my $flavor;
+    my $rpminfo = eval { $g->command(['rpm', '-qf', '--qf',
+                                   '%{NAME} %{VERSION}-%{RELEASE}', $path]) };
+    if (defined($rpminfo)) {
+        $rpminfo =~ /(\S+)\s(\S+)/;
+        $package = $1;
+        my $fullversion = $2;
+
+        # Some SUSE kernels are from a -base package, but it's more correct to
+        # use the non -base package name.
+        $package =~ s/-base$//;
+        $kernel{package} = $package;
+
+        # fullversion must include the flavor (xen, smp, default, etc.) of the
+        # kernel as well (if one exists)
+        ($flavor = $package) =~ s/^kernel//;
+        $fullversion = $fullversion.$flavor if defined($flavor);
+        $kernel{fullversion} = $fullversion;
+    }
 
     # Try to get the kernel version by running file against it
+    # RedHat kernel string: Linux kernel ... version 2.6.32-358.el6.x86_64 ...
+    # SUSE kernel string:   Linux/x86 Kernel, ... Version 3.0.76-0.11 ...
     my $version;
     my $filedesc = $g->file($path);
-    if($filedesc =~ /^$path: Linux kernel .*\bversion\s+(\S+)\b/) {
+    if($filedesc =~ /Linux.* [kK]ernel.*\b[vV]ersion\s+(\S+)\b/) {
         $version = $1;
+        if (_is_suse_family($g, $root)) {
+            # SUSE kernel version strings are missing the flavor
+            $version = $version.$flavor if defined($flavor);
+        }
+        # If $version is not correct here, default to the filename method
+        undef $version if(!$g->is_dir("/lib/modules/$version"));
     }
 
     # Sometimes file can't work out the kernel version, for example because it's
     # a Xen PV kernel. In this case try to guess the version from the filename
-    else {
+    if (!defined($version)) {
         if($path =~ m{/boot/vmlinuz-(.*)}) {
             $version = $1;
 
@@ -1092,8 +1133,9 @@ sub _configure_kernel
 
     # Pick first appropriate kernel returned by list_kernels
     my $boot_kernel;
+    my $backup_ver;
     foreach my $path ($grub->list_kernels()) {
-        my $kernel = _inspect_linux_kernel($g, $path);
+        my $kernel = _inspect_linux_kernel($g, $root, $path);
         my $version = $kernel->{version};
 
         # Skip foreign kernels
@@ -1102,7 +1144,16 @@ sub _configure_kernel
         # If we're configuring virtio, check this kernel supports it
         next if ($virtio && !_supports_virtio($version, $g));
 
-        $boot_kernel = $version;
+        # SUSE kernel installations require the version string which includes
+        # the build number. Change it here, but backup the original version as
+        # it must be restored later.
+        if (_is_suse_family($g, $root)) {
+            $boot_kernel = $kernel->{fullversion};
+            $backup_ver = $version;
+        } else {
+            $boot_kernel = $version;
+        }
+
         last;
     }
 
@@ -1190,6 +1241,10 @@ sub _configure_kernel
         augeas_error($g, $@) if ($@);
     }
 
+    # If the kernel version was backed up previously (SUSE environments),
+    # restore the original value before returning it.
+    $boot_kernel = $backup_ver if defined($backup_ver);
+
     return $boot_kernel;
 }
 
@@ -1218,7 +1273,7 @@ sub _get_os_arch
     # Get the arch of the default kernel
     my @kernels = $grub->list_kernels();
     my $path = $kernels[0] if @kernels > 0;
-    my $kernel = _inspect_linux_kernel($g, $path) if defined($path);
+    my $kernel = _inspect_linux_kernel($g, $root, $path) if defined($path);
     my $arch = $kernel->{arch} if defined($kernel);
 
     # Use the libguestfs-detected arch if the above failed
@@ -1274,7 +1329,7 @@ sub _unconfigure_hv
 
     my @apps = $g->inspect_list_applications($root);
 
-    _unconfigure_xen($g, \@apps);
+    _unconfigure_xen($g, $root, \@apps);
     _unconfigure_vbox($g, \@apps);
     _unconfigure_vmware($g, \@apps);
     _unconfigure_citrix($g, \@apps);
@@ -1283,7 +1338,7 @@ sub _unconfigure_hv
 # Unconfigure Xen specific guest modifications
 sub _unconfigure_xen
 {
-    my ($g, $apps) = @_;
+    my ($g, $root, $apps) = @_;
 
     # Look for kmod-xenpv-*, which can be found on RHEL 3 machines
     my @remove;
@@ -1335,6 +1390,27 @@ sub _unconfigure_xen
 
             $g->write_file('/etc/rc.local', join("\n", @rc_local)."\n", $size);
         }
+    }
+
+    if (_is_suse_family($g, $root)) {
+        # Remove xen modules from INITRD_MODULES and DOMU_INITRD_MODULES
+        my $sysconfig = '/etc/sysconfig/kernel';
+        my @variables = qw(INITRD_MODULES DOMU_INITRD_MODULES);
+        my @xen_modules = qw(xennet xen-vnif xenblk xen-vbd);
+        my $modified;
+
+        foreach my $var (@variables) {
+            foreach my $xen_mod (@xen_modules) {
+                foreach my $entry
+                    ($g->aug_match("/files$sysconfig/$var/'.
+                                   'value[. = '$xen_mod']"))
+                {
+                    $g->aug_rm($entry);
+                    $modified = 1;
+                }
+            }
+        }
+        $g->aug_save if (defined($modified));
     }
 }
 
@@ -1629,7 +1705,7 @@ sub _install_capability
                     {
                         # filter out xen/xenU from release field
                         if (defined($kernel_release) &&
-                            $kernel_release =~ /^(\S+?)(xen)?(U)?$/)
+                            $kernel_release =~ /^(\S+?)(-?xen)?(U)?$/)
                         {
                             $kernel_release = $1;
                         }
@@ -1737,14 +1813,22 @@ sub _install_any
     # If we're installing a kernel, check which kernels are there first
     my @k_before = $g->glob_expand('/boot/vmlinuz-*') if defined($kernel);
 
+    # Workaround for SUSE bnc#836521
+    my $pbl_fix = _modify_perlBootloader($g) if (defined($kernel) &&
+                  (_is_suse_family($g, $root)));
+
     my $success = 0;
     _net_run($g, sub {
         eval {
             # Try to fetch these dependencies using the guest's native update
             # tool
-            $success = _install_up2date($kernel, $install, $upgrade, $g);
-            $success = _install_yum($kernel, $install, $upgrade, $g)
-                unless ($success);
+            if (_is_suse_family($g, $root)) {
+                $success = _install_zypper($kernel, $install, $upgrade, $g);
+            } else {
+                $success = _install_up2date($kernel, $install, $upgrade, $g);
+                $success = _install_yum($kernel, $install, $upgrade, $g)
+                    unless ($success);
+            }
 
             # Fall back to local config if the above didn't work
             $success = _install_config($kernel, $install, $upgrade,
@@ -1753,6 +1837,9 @@ sub _install_any
         };
         warn($@) if $@;
     });
+
+    # Undo the previous workaround for SUSE bnc#836521
+    _restore_perlBootloader($g) if ($pbl_fix == 1);
 
     # Make augeas reload to pick up any altered configuration
     eval { $g->aug_load() };
@@ -1887,6 +1974,90 @@ sub _install_yum
     return $success;
 }
 
+sub _install_zypper
+{
+    my ($kernel, $install, $update, $g) = @_;
+
+    # Check this system has zypper
+    return 0 unless ($g->is_file_opts('/usr/bin/zypper', followsymlinks=>1));
+
+    # Install or update the kernel?
+    # If it isn't installed (because we're replacing a PV kernel), we need to
+    # install
+    # If we're installing a specific version, we need to install
+    # If the kernel package we're installing is already installed and we're
+    # just upgrading to the latest version, we need to update
+    if (defined($kernel)) {
+        my @installed = _get_installed($kernel->[0], $g);
+
+        # Don't modify the contents of $install and $update in case we fall
+        # through and they're reused in another function
+        if (@installed == 0 || defined($kernel->[2])) {
+            my @tmp = defined($install) ? @$install : ();
+            push(@tmp, $kernel);
+            $install = \@tmp;
+        } else {
+            my @tmp = defined($update) ? @$update : ();
+            push(@tmp, $kernel);
+            $update = \@tmp;
+        }
+    }
+
+    my $success = 1;
+    # Error when installing: "No provider of 'pkg' found."
+    # (Not an) Error when updating: "Package 'pkg' is not available in your
+    # repositories. Cannot reinstall, upgrade, or downgrade."
+    ZYPPER: foreach my $task (
+        [ "install", $install, qr/(^No package|already installed)/ ],
+        [ "update", $update, qr/(^No Packages|not available)/ ]
+    ) {
+        my ($action, $list, $failure) = @$task;
+
+        # Build a list of packages to install
+        my @pkgs;
+        foreach my $entry (@$list) {
+            next unless (defined($entry));
+
+            # zypper doesn't need arch or epoch
+            my ($name, undef, undef, $version, $release) = @$entry;
+
+            # Construct n-v-r
+            my $pkg = $name;
+            $pkg .= "-$version" if (defined($version));
+            $pkg .= "-$release" if (defined($release));
+
+
+            push(@pkgs, "$pkg");
+        }
+
+        if (@pkgs) {
+            my @output =
+                eval { $g->command(['/usr/bin/zypper', '-n', $action,
+                     @pkgs]) };
+            if ($@) {
+                # Ignore 'No provider' errors as an install from the virt-v2v
+                # repo will be attempted next.
+                if ($@ !~ /No provider/) {
+                    logmsg WARN, __x('Failed to install packages. '.
+                                   'Error was: {error}', error => $@);
+                }
+                $success = 0;
+                last ZYPPER;
+            }
+            foreach my $line (@output) {
+                # Don't report an error or results if package is already
+                # installed or not found in a repo
+                if ($line =~ /$failure/) {
+                    $success = 0;
+                    last ZYPPER;
+                }
+            }
+        }
+    }
+
+    return $success;
+}
+
 sub _install_config
 {
     my ($kernel_naevr, $install, $upgrade, $g, $root, $config) = @_;
@@ -1923,11 +2094,33 @@ sub _install_config
                'files referenced in the configuration file are '.
                'required, but missing: {list}',
                list => join(' ', @missing)) if scalar(@missing) > 0;
-    # Install any non-kernel requirements
-    _install_rpms($g, $config, 1, @user_paths);
 
-    if (defined($kernel)) {
-        _install_rpms($g, $config, 0, ($kernel));
+    # If a SUSE kernel is being added, a -base kernel could have been added to
+    # to @user_paths (as a dep app). If so, move it to a new list containing
+    # both kernel and kernel-base packages to satisfy dependencies, and
+    # 'install' instead of 'upgrade' the packages.
+    if (_is_suse_family($g, $root) && (defined($kernel))) {
+        my @kernel_paths;
+        push(@kernel_paths, $kernel);
+        if (@user_paths) {
+            for my $index (reverse 0 .. scalar(@user_paths-1)) {
+                if ($user_paths[$index] =~ /(.*\/)kernel/) {
+                    push(@kernel_paths, $user_paths[$index]);
+                    splice(@user_paths, $index, 1);
+                }
+            }
+            # Install any non-kernel requirements
+            _install_rpms($g, $config, 1, @user_paths);
+        }
+        # Install kernel packages
+        _install_rpms($g, $config, 0, @kernel_paths);
+    } else {
+        # Install any non-kernel requirements
+        _install_rpms($g, $config, 1, @user_paths);
+
+        if (defined($kernel)) {
+            _install_rpms($g, $config, 0, ($kernel));
+        }
     }
 
     return 1;
@@ -2065,7 +2258,7 @@ sub _discover_kernel
     my $kernel_ver;
 
     foreach my $path ($grub->list_kernels()) {
-        my $kernel = _inspect_linux_kernel($g, $path);
+        my $kernel = _inspect_linux_kernel($g, $root, $path);
 
         # Check its architecture is known
         $kernel_arch = $kernel->{arch};
@@ -2075,7 +2268,12 @@ sub _discover_kernel
         $kernel_pkg = $kernel->{package};
 
         # Get the kernel package version
-        $kernel_ver = $kernel->{version};
+        # SUSE requires the fullversion string
+        if (_is_suse_family($g, $root)) {
+            $kernel_ver = $kernel->{fullversion};
+        } else {
+            $kernel_ver = $kernel->{version};
+        }
 
         last;
     }
@@ -2100,56 +2298,114 @@ sub _get_replacement_kernel_name
     # Make an informed choice about a replacement kernel for distros we know
     # about
 
-    # RHEL 5
-    if (_is_rhel_family($g, $root) && $g->inspect_get_major_version($root) eq '5') {
-        if ($arch eq 'i686') {
-            # XXX: This assumes that PAE will be available in the hypervisor.
-            # While this is almost certainly true, it's theoretically possible
-            # that it isn't. The information we need is available in the
-            # capabilities XML.  If PAE isn't available, we should choose
-            # 'kernel'.
-            return 'kernel-PAE';
-        }
-
-        # There's only 1 kernel package on RHEL 5 x86_64
-        else {
-            return 'kernel';
-        }
-    }
-
-    # RHEL 4
-    elsif (_is_rhel_family($g, $root) && $g->inspect_get_major_version($root) eq '4') {
-        if ($arch eq 'i686') {
-            # If the guest has > 10G RAM, give it a hugemem kernel
-            if ($meta->{memory} > 10 * 1024 * 1024 * 1024) {
-                return 'kernel-hugemem';
+    # RedHat kernels
+    if (_is_rhel_family($g, $root)) {
+        # RHEL 5
+        if ($g->inspect_get_major_version($root) eq '5') {
+            if ($arch eq 'i686') {
+                # XXX: This assumes that PAE will be available in the
+                # hypervisor. While this is almost certainly true, it's
+                # theoretically possible that it isn't. The information
+                # we need is available in the capabilities XML.  If PAE
+                # isn't available, we should choose 'kernel'.
+                return 'kernel-PAE';
             }
 
-            # SMP kernel for guests with >1 CPU
-            elsif ($meta->{cpus} > 1) {
-                return 'kernel-smp';
-            }
-
+            # There's only 1 kernel package on RHEL 5 x86_64
             else {
                 return 'kernel';
             }
         }
 
-        else {
-            if ($meta->{cpus} > 8) {
-                return 'kernel-largesmp';
+        # RHEL 4
+        elsif ($g->inspect_get_major_version($root) eq '4') {
+            if ($arch eq 'i686') {
+                # If the guest has > 10G RAM, give it a hugemem kernel
+                if ($meta->{memory} > 10 * 1024 * 1024 * 1024) {
+                    return 'kernel-hugemem';
+                }
+
+                # SMP kernel for guests with >1 CPU
+                elsif ($meta->{cpus} > 1) {
+                    return 'kernel-smp';
+                }
+
+                else {
+                    return 'kernel';
+                }
             }
 
-            elsif ($meta->{cpus} > 1) {
-                return 'kernel-smp';
-            }
             else {
-                return 'kernel';
+                if ($meta->{cpus} > 8) {
+                    return 'kernel-largesmp';
+                }
+
+                elsif ($meta->{cpus} > 1) {
+                    return 'kernel-smp';
+                }
+                else {
+                    return 'kernel';
+                }
+            }
+        }
+
+        # RHEL 3 didn't have a xen kernel
+    }
+
+    # SUSE kernels
+    elsif (_is_suse_family($g, $root)) {
+        # openSUSE should always use kernel-default
+        if ($g->inspect_get_distro($root) eq 'opensuse') {
+            return 'kernel-default';
+        }
+        # SLES 11+
+        elsif ($g->inspect_get_major_version($root) ge '11') {
+            if ($arch eq 'i586') {
+                # If the guest has > 10G RAM, give it a pae kernel
+                if ($meta->{memory} > 10 * 1024 * 1024 * 1024) {
+                    return 'kernel-pae';
+                }
+
+                else {
+                    return 'kernel-default';
+                }
+            }
+
+            # There is only 1 kernel which should be used on SLES 11 x86_64
+            else {
+                return 'kernel-default';
+            }
+        }
+
+        # SLES 10
+        elsif ($g->inspect_get_major_version($root) eq '10') {
+            if ($arch eq 'i586') {
+                # If the guest has > 10G RAM, give it a bigsmp kernel
+                if ($meta->{memory} > 10 * 1024 * 1024 * 1024) {
+                    return 'kernel-bigsmp';
+                }
+
+                # SMP kernel for guests with >1 CPU
+                elsif ($meta->{cpus} > 1) {
+                    return 'kernel-smp';
+                }
+
+                else {
+                    return 'kernel-default';
+                }
+            }
+
+            else {
+                if ($meta->{cpus} > 1) {
+                    return 'kernel-smp';
+                }
+
+                else {
+                    return 'kernel-default';
+                }
             }
         }
     }
-
-    # RHEL 3 didn't have a xen kernel
 
     # XXX: Could do with a history of Fedora kernels in here
 
@@ -2346,6 +2602,12 @@ sub _remap_block_devices
     # Fedora has used libata since FC7, which is long out of support. We assume
     # that all Fedora distributions in use use libata.
 
+    # SUSE uses libata, but IDE devices can be presented as hdX in some
+    # environments (such as fully virtual machines).
+    if (_is_suse_family($g, $root)) {
+            $libata = 0;
+    }
+
     if ($libata) {
         # If there are any IDE devices, the guest will have named these sdX
         # after any SCSI devices. i.e. If we have disks hda, hdb, sda and sdb,
@@ -2418,6 +2680,8 @@ sub _remap_block_devices
         elsif (defined($grub->{cfg})) {
             push (@checklist, '/files/etc/sysconfig/grub/GRUB_CMDLINE_LINUX');
             push (@checklist, '/files/etc/default/grub/GRUB_CMDLINE_LINUX');
+            push (@checklist, '/files/etc/default/grub/'.
+                              'GRUB_CMDLINE_LINUX_DEFAULT');
         }
 
         # Search through all checklist entries and add matches to a matchlist
@@ -2528,6 +2792,13 @@ sub _prepare_bootable
         $g->command(['/sbin/dracut', '--add-drivers', join(" ", @modules),
                      $grub_initrd, $version]);
     }
+    elsif (_is_suse_family($g, $root) &&
+          ($g->is_file_opts('/sbin/mkinitrd', followsymlinks=>1))) {
+        $g->sh('/sbin/mkinitrd -m "'.join(' ', @modules).'" '.
+               ' -i '.$grub_initrd.' -k /boot/vmlinuz-'.$version);
+    }
+
+    # Default to original mkinitrd, if not SUSE and dracut does not exist
 
     elsif ($g->is_file_opts('/sbin/mkinitrd', followsymlinks=>1)) {
         # Create a new initrd which probes the required kernel modules
@@ -2629,8 +2900,13 @@ sub _get_display_driver
 {
     my ($g, $root) = @_;
 
-    # RedHat uses qxl, which should be the default driver.
-    return 'qxl';
+    if (_is_suse_family($g, $root)) {
+        # SUSE currently uses cirrus.
+        return 'cirrus';
+    } else {
+        # RedHat uses qxl, which should be the default driver.
+        return 'qxl';
+    }
 }
 
 # Distributions may use either i586 or i686 for 32bit architectures
@@ -2639,11 +2915,49 @@ sub _set_32bit_arch
     my ($g, $root, $arch) = @_;
 
     if ($arch =~ /^i[345]86$/) {
-        # RedHat uses i686, which should be the default 32bit arch
-        $arch = 'i686';
+        if (_is_sles_family($g, $root)) {
+            # SUSE uses i586.
+            $arch = 'i586';
+        } else {
+            # RedHat uses i686, which should be the default 32bit arch
+            $arch = 'i686';
+        }
     }
 
     return $arch;
+}
+
+# The next two functions are a SUSE-specific temporary workaround to
+# bnc#836521. This is required to prevent root being set to (hd*) instead
+# of the correct (hd*,*). The actual fix is in a new perl-Bootloader, which
+# will likely not be on most guests.
+sub _modify_perlBootloader
+{
+    my ($g) = @_;
+    my $module = $g->sh('rpm -ql perl-Bootloader | grep GRUB.pm');
+    chomp($module);
+    my $module_bak = "$module.v2vtmp";
+
+    if ($g->grep('/dev/(?:vx', "$module")) {
+        $g->mv($module, $module_bak);
+        $g->sh("/usr/bin/sed -e's/vx/xv/' $module_bak > $module");
+
+        return 1;
+    }
+
+    return 0;
+}
+
+sub _restore_perlBootloader
+{
+    my ($g) = @_;
+    my $module = $g->sh('rpm -ql perl-Bootloader | grep GRUB.pm');
+    chomp($module);
+    my $module_bak = "$module.v2vtmp";
+
+    if ($g->exists($module_bak)) {
+        $g->mv($module_bak, $module);
+    }
 }
 
 =back
