@@ -502,6 +502,8 @@ sub _close_firstboot
 {
     my ($g, $firstboot, $firstboot_tmp, $firstboot_dir) = @_;
 
+    return unless defined($firstboot);
+
     print $firstboot <<'FIRSTBOOT';
 
 echo uninstalling v2v-firstboot service >>log.txt
