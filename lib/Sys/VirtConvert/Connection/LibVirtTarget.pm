@@ -338,7 +338,7 @@ sub _meta_to_domxml
 
     my $video_model;
     my $display_type;
-    if ($guestcaps->{display} eq 'cirrus') {
+    if (exists($guestcaps->{display}) && $guestcaps->{display} eq 'cirrus') {
       $video_model = "model type='cirrus' vram='9216' heads='1'";
       $display_type = "vnc";
     } else {
