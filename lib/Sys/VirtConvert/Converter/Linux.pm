@@ -2918,7 +2918,7 @@ sub _set_32bit_arch
     my ($g, $root, $arch) = @_;
 
     if ($arch =~ /^i[345]86$/) {
-        if (_is_sles_family($g, $root)) {
+        if (_is_suse_family($g, $root)) {
             # SUSE uses i586.
             $arch = 'i586';
         } else {
