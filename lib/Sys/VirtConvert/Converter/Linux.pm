@@ -1816,8 +1816,9 @@ sub _install_any
     my @k_before = $g->glob_expand('/boot/vmlinuz-*') if defined($kernel);
 
     # Workaround for SUSE bnc#836521
-    my $pbl_fix = _modify_perlBootloader($g) if (defined($kernel) &&
-                  (_is_suse_family($g, $root)));
+    my $pbl_fix = 0;
+    $pbl_fix = _modify_perlBootloader($g)
+        if (defined($kernel) && (_is_suse_family($g, $root)));
 
     my $success = 0;
     _net_run($g, sub {
