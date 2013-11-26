@@ -669,6 +669,8 @@ sub can_handle
                ($g->inspect_get_distro($root) eq 'fedora') ||
                 _is_suse_family($g, $root));
     }
+
+    return 0;
 }
 
 =item Sys::VirtConvert::Converter::Linux->convert(g, root, config, meta, options)
