@@ -338,7 +338,7 @@ sub _prepare_virtio_drivers
                          'configured with a {block} block storage '.
                          'adapter, but no driver will be installed for '.
                          'it. If the {block} driver is not already '.
-                         'installed in the guest, it will fail to boot.'.
+                         'installed in the guest, it will fail to boot.',
                          block => $block);
     }
 
