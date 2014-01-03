@@ -564,6 +564,12 @@ sub _unconfigure_xenpv
 {
     my ($g, $h_soft, $firstboot) = @_;
 
+    if (!defined($firstboot)) {
+        logmsg WARN, __x('Unable to uninstall Xen PV drivers without '.
+                         'firstboot');
+        return;
+    }
+
     my @regkey = ('Microsoft', 'Windows', 'CurrentVersion', 'Uninstall',
                   'Red Hat Paravirtualized Xen Drivers for Windows(R)');
 
