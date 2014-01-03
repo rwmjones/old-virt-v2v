@@ -312,13 +312,24 @@ sub _prepare_virtio_drivers
         return ($block, $net);
     }
 
-    # We can't proceed if there are any files missing
+    # We can't install any drivers if the defined virtio path is missing
     my $virtio_guest = $config->get_transfer_path($virtio_host);
-    v2vdie __x('Installation failed because the following '.
-               'files referenced in the configuration file are '.
-               'required, but missing: {list}',
-               list => $virtio_host)
-        unless (defined($virtio_host) && $g->exists($virtio_guest));
+    if (!(defined($virtio_host) && $g->exists($virtio_guest))) {
+        my $block = 'ide';
+        my $net   = 'rtl8139';
+
+        logmsg WARN, __x('The installation of virtio drivers failed because '.
+               'the driver path referenced in the configuration file '.
+               '({path}) is required, but missing. The guest will be '.
+               'configured with a {block} block storage adapter and a {net} '.
+               'network adapter, but no drivers will be installed for them. '.
+               'If the {block} driver is not already installed in the guest,'.
+               ' it will fail to boot. If the {net} driver is not already '.
+               'installed in the guest, you must install it manually after '.
+               'conversion.', path => $virtio_host, block => $block,
+               net => $net);
+        return ($block, $net);
+    }
 
     my ($block, $net);
     my $viostor_guest = File::Spec->catfile($virtio_guest, 'viostor.sys');
